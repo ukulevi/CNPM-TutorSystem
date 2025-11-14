@@ -1,0 +1,195 @@
+{
+  "profiles": [
+    {
+      "id": "1",
+      "name": "PGS.TS Nguyễn Thành Công",
+      "email": "cong.nguyen@example.com",
+      "department": "Khoa học và Kỹ thuật Máy tính",
+      "officeLocation": "Phòng A1-101, Tòa nhà H6",
+      "role": "tutor",
+      "rating": 4.8,
+      "specialization": "Kỹ thuật phần mềm",
+      "publications": [
+        { "title": "Phân tích và thiết kế hệ thống hướng đối tượng", "link": "#", "public": true },
+        { "title": "Kiến trúc phần mềm cho hệ thống lớn", "link": "#", "public": true }
+      ],
+      "scheduleVisibility": "public",
+      "documentsVisibility": "public"
+    },
+    {
+      "id": "2",
+      "name": "TS. Trần Thị Bích",
+      "email": "bich.tran@example.com",
+      "department": "Khoa học và Kỹ thuật Máy tính",
+      "officeLocation": "Phòng A1-102, Tòa nhà H6",
+      "role": "tutor",
+      "rating": 4.9,
+      "specialization": "Trí tuệ nhân tạo",
+      "publications": [
+        { "title": "Ứng dụng học sâu trong xử lý ngôn ngữ tự nhiên", "link": "#", "public": true }
+      ],
+      "scheduleVisibility": "public",
+      "documentsVisibility": "public"
+    },
+    {
+      "id": "3",
+      "name": "ThS. Lê Văn Dũng",
+      "email": "dung.le@example.com",
+      "department": "Kỹ thuật Hóa học",
+      "officeLocation": "Phòng B2-203, Tòa nhà H1",
+      "role": "tutor",
+      "rating": 4.7,
+      "specialization": "Hóa hữu cơ",
+      "publications": [],
+      "scheduleVisibility": "public",
+      "documentsVisibility": "private"
+    },
+    {
+      "id": "student-01",
+      "name": "Nguyễn Văn A",
+      "email": "a.nguyen@student.example.com",
+      "department": "Khoa học và Kỹ thuật Máy tính",
+      "role": "student",
+      "major": "Kỹ thuật phần mềm",
+      "cohort": "K2021",
+      "academicInterests": [
+        { "interest": "Phát triển web", "public": true },
+        { "interest": "Học máy", "public": true }
+      ],
+      "coursesOfInterest": [
+        { "course": "CO3001", "public": true },
+        { "course": "CO3002", "public": true }
+      ],
+      "scheduleVisibility": "private",
+      "documentsVisibility": "private"
+    },
+    {
+      "id": "student-02",
+      "name": "Trần Thị C",
+      "email": "c.tran@student.example.com",
+      "department": "Khoa học và Kỹ thuật Máy tính",
+      "role": "student",
+      "major": "Khoa học Máy tính",
+      "cohort": "K2022",
+      "academicInterests": [
+        { "interest": "An toàn thông tin", "public": true }
+      ],
+      "coursesOfInterest": [],
+      "scheduleVisibility": "public",
+      "documentsVisibility": "public"
+    }
+  ],
+  "departments": [
+    { "id": "cse", "name": "Khoa học và K-thuật Máy tính" },
+    { "id": "ce", "name": "Kỹ thuật Hóa học" },
+    { "id": "me", "name": "Kỹ thuật Cơ khí" }
+  ],
+  "appointments": [
+    {
+      "id": "apt-01",
+      "tutorId": "1",
+      "tutorName": "PGS.TS Nguyễn Thành Công",
+      "studentId": "student-01",
+      "studentName": "Nguyễn Văn A",
+      "subject": "Kỹ thuật phần mềm",
+      "date": "2025-11-12",
+      "time": "14:00",
+      "status": "booked",
+      "type": "online"
+    },
+    {
+      "id": "apt-02",
+      "tutorId": "2",
+      "tutorName": "TS. Trần Thị Bích",
+      "studentId": "student-01",
+      "studentName": "Nguyễn Văn A",
+      "subject": "Trí tuệ nhân tạo",
+      "date": "2025-11-13",
+      "time": "10:00",
+      "status": "booked",
+      "type": "offline"
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc-1",
+      "userId": "1",
+      "name": "Đề cương KTPM.pdf",
+      "url": "#",
+      "size": "1.2MB",
+      "uploadDate": "2025-10-20",
+      "type": "pdf",
+      "visibility": "public",
+      "pinned": true
+    },
+    {
+      "id": "doc-2",
+      "userId": "1",
+      "name": "Slide bài giảng tuần 1.pdf",
+      "url": "#",
+      "size": "3.5MB",
+      "uploadDate": "2025-10-22",
+      "type": "pdf",
+      "visibility": "public",
+      "pinned": false
+    },
+    {
+      "id": "doc-3",
+      "userId": "1",
+      "name": "Ghi chú cá nhân.doc",
+      "url": "#",
+      "size": "500KB",
+      "uploadDate": "2025-10-25",
+      "type": "doc",
+      "visibility": "private",
+      "pinned": false
+    },
+    {
+      "id": "doc-student-1",
+      "userId": "student-01",
+      "name": "Báo cáo đồ án.docx",
+      "url": "#",
+      "size": "2.1MB",
+      "uploadDate": "2025-11-01",
+      "type": "doc",
+      "visibility": "private",
+      "pinned": false
+    }
+  ],
+  "tutors": [
+    {
+      "id": "1",
+      "name": "PGS.TS Nguyễn Thành Công",
+      "department": "Khoa học và Kỹ thuật Máy tính",
+      "specialization": "Kỹ thuật phần mềm",
+      "rating": 4.8,
+      "avatar": ""
+    },
+    {
+      "id": "2",
+      "name": "TS. Trần Thị Bích",
+      "department": "Khoa học và Kỹ thuật Máy tính",
+      "specialization": "Trí tuệ nhân tạo",
+      "rating": 4.9,
+      "avatar": ""
+    },
+    {
+      "id": "3",
+      "name": "ThS. Lê Văn Dũng",
+      "department": "Kỹ thuật Hóa học",
+      "specialization": "Hóa hữu cơ",
+      "rating": 4.7,
+      "avatar": ""
+    }
+  ],
+  "evaluations": [
+    {
+      "id": "eval-01",
+      "tutorId": "1",
+      "studentId": "student-01",
+      "sessionId": "apt-01",
+      "rating": 5,
+      "comment": "Giảng viên rất nhiệt tình và giải đáp thắc mắc rất chi tiết."
+    }
+  ]
+}

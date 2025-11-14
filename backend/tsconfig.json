@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // Biên dịch sang phiên bản JavaScript hiện đại
+    "module": "commonjs", // Sử dụng hệ thống module của Node.js
+    "rootDir": "./src", // Thư mục chứa code TypeScript nguồn
+    "outDir": "./dist", // Thư mục chứa code JavaScript sau khi biên dịch
+    "esModuleInterop": true, // Cho phép tương tác tốt hơn giữa các loại module
+    "forceConsistentCasingInFileNames": true,
+    "strict": true, // Bật tất cả các quy tắc kiểm tra kiểu nghiêm ngặt
+    "skipLibCheck": true // Bỏ qua việc kiểm tra kiểu của các file thư viện
+  },
+  "include": ["src/**/*"] // Chỉ biên dịch các file trong thư mục src
+}
