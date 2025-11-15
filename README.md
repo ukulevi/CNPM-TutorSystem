@@ -17,15 +17,15 @@ Based on the sample data, the system includes the following features:
 
 ### Frontend
 -   **Framework:** React
--   **Routing:** (e.g., React Router)
--   **Styling:** (e.g., CSS Modules, Tailwind CSS, Styled Components)
+-   **Routing:** React Router
+-   **Styling:** CSS Modules, Tailwind CSS
 
 ### Backend
 -   **Mock API:** json-server
 
 ### Development
 -   **Package Manager:** npm
--   **Build Tool:** (e.g., Vite, Create React App)
+-   **Build Tool:** Vite
 -   **Linting:** ESLint
 
 ## 🚀 Getting Started
@@ -43,21 +43,21 @@ Based on the sample data, the system includes the following features:
     ```
 2.  Navigate to the project directory and install the dependencies:
     ```sh
-    cd <PROJECT_DIRECTORY>
+    cd CNPM-TutorSystem
     npm i
     ```
 
 ### Running the Project
 
 1.  **Start the Backend (API Server):**
-    Open a terminal and run the following command in the `<backend>` directory to start `json-server`.
+    Open a terminal and run the following command in the `backend` directory to start `json-server`.
     ```sh
     npm run dev
     ```
     The API will be available at `http://localhost:3001` (or the configured port).
 
 2.  **Start the Frontend (User Interface):**
-    Open another terminal and run the following command in the `<TutorSupportSystem>` directory.
+    Open another terminal and run the following command in the `frontend` directory.
     ```sh
     npm run dev
     ```
