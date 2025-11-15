@@ -15,9 +15,18 @@ Based on the sample data, the system includes the following features:
 
 ## 🛠️ Tech Stack
 
--   **Backend (Mock API):** `json-server` to create a mock REST API from the `db.json` file.
--   **Package Manager:** `npm`
--   **Frontend:** React
+### Frontend
+-   **Framework:** React
+-   **Routing:** (e.g., React Router)
+-   **Styling:** (e.g., CSS Modules, Tailwind CSS, Styled Components)
+
+### Backend
+-   **Mock API:** json-server
+
+### Development
+-   **Package Manager:** npm
+-   **Build Tool:** (e.g., Vite, Create React App)
+-   **Linting:** ESLint
 
 ## 🚀 Getting Started
 
