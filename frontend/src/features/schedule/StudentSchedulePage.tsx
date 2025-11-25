@@ -3,7 +3,7 @@ import { ArrowLeft, Calendar as CalendarIcon } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { Sidebar } from '../../components/shared/Sidebar';
-import { getScheduleForStudent, cancelAppointment } from '../../api/calendarApi';
+import { getScheduleForStudent, cancelAppointment } from './api/calendarApi';
 import { CalendarDay, CalendarHour, CalendarSlot } from '../../types';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 

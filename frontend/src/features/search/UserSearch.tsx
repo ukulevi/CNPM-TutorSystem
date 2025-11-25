@@ -6,8 +6,8 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Avatar, AvatarFallback } from '../../components/ui/avatar';
 import { Badge } from '../../components/ui/badge';
 import { Sidebar } from '../../components/shared/Sidebar';
-import { searchUsers } from '../../api/profileApi';
-import { getDepartments } from '../../api/findTutorApi';
+import { searchUsers } from '../profile/api/profileApi';
+import { getDepartments } from './api/findTutorApi';
 import { UserRole, Department } from '../../types'; // Import Department từ đây
 
 type UserSearchProps = {

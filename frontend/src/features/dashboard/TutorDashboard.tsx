@@ -4,7 +4,7 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Avatar, AvatarFallback } from '../../components/ui/avatar';
 import { Sidebar } from '../../components/shared/Sidebar';
-import { getTutorDashboardData } from '../../api/tutorApi';
+import { getTutorDashboardData } from '../profile/api/tutorApi';
 import { TutorStats, UpcomingRequest } from '../../types';
 
 type TutorDashboardProps = {

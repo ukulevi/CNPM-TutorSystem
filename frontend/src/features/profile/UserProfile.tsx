@@ -16,9 +16,9 @@ import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '../../components/ui/radio-group';
 import { Sidebar } from '../../components/shared/Sidebar';
-import { getUserProfile, updateUserProfile } from '../../api/profileApi';
-import { getScheduleForTutor, getScheduleForStudent } from '../../api/calendarApi';
-import { getDocuments } from '../../api/documentApi';
+import { getUserProfile, updateUserProfile } from './api/profileApi';
+import { getScheduleForTutor, getScheduleForStudent } from '../schedule/api/calendarApi';
+import { getDocuments } from '../documents/api/documentApi';
 import { Tutor, CalendarDay, Document as Doc } from '../../types'; // Đã sửa ở các bước trước
 
 // Define the UserProfileData type here or import from a central types file

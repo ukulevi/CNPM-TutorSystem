@@ -1,5 +1,22 @@
 export type UserRole = 'student' | 'tutor' | null;
 
+export type User = {
+    id: string;
+    name: string;
+    email: string;
+    role: 'student' | 'tutor';
+    avatar?: string;
+    department?: string;
+    major?: string;
+    cohort?: string;
+    officeLocation?: string;
+    rating?: number;
+    specialization?: string;
+    publications?: { title: string; link: string; public: boolean }[];
+    scheduleVisibility?: string;
+    documentsVisibility?: string;
+};
+
 export type Tutor = {
   id: string;
   name: string;
@@ -34,7 +51,7 @@ export type CalendarHour = {
 };
 
 export type CalendarSlot = {
-  id: string;
+  id:string;
   subject: string; // Đổi 'title' thành 'subject' cho nhất quán
   status: 'available' | 'booked' | 'personal';
   studentName?: string;

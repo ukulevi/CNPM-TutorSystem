@@ -5,7 +5,7 @@ import { Input } from '../../components/ui/input';
 import { Card, CardContent } from '../../components/ui/card';
 import { Avatar, AvatarFallback } from '../../components/ui/avatar';
 import { Badge } from '../../components/ui/badge';
-import { getTutors, getDepartments } from '../../api/findTutorApi'; // Sửa đường dẫn import
+import { getTutors, getDepartments } from './api/findTutorApi'; // Sửa đường dẫn import
 import { Sidebar } from '../../components/shared/Sidebar';
 import { Tutor, Department } from '../../types';
 

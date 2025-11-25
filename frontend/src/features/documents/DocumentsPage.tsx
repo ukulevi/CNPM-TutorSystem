@@ -3,7 +3,7 @@ import { ArrowLeft, Upload, File, FileText, Image, MoreVertical, Trash2, Pin, Pi
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Sidebar } from '../../components/shared/Sidebar';
-import { getDocuments, uploadDocument, updateDocumentVisibility, deleteDocument, toggleDocumentPin } from '../../api/documentApi';
+import { getDocuments, uploadDocument, updateDocumentVisibility, deleteDocument, toggleDocumentPin } from './api/documentApi';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '../../components/ui/dialog';
 import { Label } from '../../components/ui/label';
 import { RadioGroup, RadioGroupItem } from '../../components/ui/radio-group';
@@ -212,7 +212,7 @@ export function DocumentsPage({ userRole, currentUserId, onNavigate, onGoBack }:
                           </SelectContent>
                         </Select>
                         <DropdownMenu>
-                          <DropdownMenuTrigger>
+                          <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">
                               <MoreVertical className="w-4 h-4" />
                             </Button>

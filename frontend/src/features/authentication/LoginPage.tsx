@@ -1,11 +1,25 @@
+import { useState, useEffect } from 'react';
 import { Button } from '../../components/ui/button';
-import { UserRole } from '../../types';
+import { getAllProfiles } from '../../features/profile/api/profileApi';
 
 type LoginPageProps = {
-  onLogin: (role: UserRole) => void;
+  onLogin: (user: User) => void;
 };
 
 export function LoginPage({ onLogin }: LoginPageProps) {
+  const [defaultStudent, setDefaultStudent] = useState<User | null>(null);
+  const [defaultTutor, setDefaultTutor] = useState<User | null>(null);
+
+  useEffect(() => {
+    getAllProfiles()
+      .then(data => {
+        const student = data.find((p: User) => p.role === 'student');
+        const tutor = data.find((p: User) => p.role === 'tutor');
+        setDefaultStudent(student);
+        setDefaultTutor(tutor);
+      });
+  }, []);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#003366] to-[#0099CC]">
       <div className="bg-white rounded-2xl shadow-2xl p-12 max-w-md w-full mx-4">
@@ -24,7 +38,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
         {/* SSO Login Button */}
         <Button
-          onClick={() => onLogin('student')}
+          onClick={() => defaultStudent && onLogin(defaultStudent)}
           className="w-full bg-[#003366] hover:bg-[#004488] text-white h-14 text-lg mb-4"
         >
           <div className="flex items-center gap-3">
@@ -37,7 +51,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
         {/* Demo: Tutor Login */}
         <Button
-          onClick={() => onLogin('tutor')}
+          onClick={() => defaultTutor && onLogin(defaultTutor)}
           variant="outline"
           className="w-full h-12 border-[#003366] text-[#003366] hover:bg-[#003366]/5"
         >

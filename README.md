@@ -1,64 +1,88 @@
-# Tutor Support System Design
+# Tutor Support System
 
-This is the source code repository for the **Tutor Support System** project. The system is designed to connect students with tutors (lecturers), making it easy for students to find academic support, book appointments, and manage learning materials.
+The Tutor Support System is a comprehensive platform designed to connect students with tutors (lecturers), enabling them to easily find academic support, schedule appointments, and manage learning materials.
 
-The original UI design for the project is available on [Figma](https://www.figma.com/design/aPIXof5yJhs8YjZABkDoVs/Tutor-Support-System-Design).
+The initial UI/UX design for the project is available on [Figma](https://www.figma.com/design/aPIXof5yJhs8YjZABkDoVs/Tutor-Support-System-Design).
 
 ## ✨ Key Features
 
-Based on the sample data, the system includes the following features:
 -   **Profile Management:** Students and tutors can create and manage their personal profiles.
--   **Tutor Search:** Students can search for tutors by department and specialization.
--   **Appointment Booking:** Students can view schedules and book appointments (online/offline) with tutors.
--   **Document Management:** Users can upload and share learning materials.
--   **Tutor Evaluation:** Students can rate and leave feedback after an appointment.
+-   **Tutor Search:** Students can search for tutors by faculty and major.
+-   **Appointment Scheduling:** Students can view tutor schedules and book appointments (online/offline).
+-   **Document Management:** Users can upload and share educational materials.
+-   **Tutor Evaluation:** Students can rate and leave feedback after a session.
 
 ## 🛠️ Tech Stack
 
-### Frontend
--   **Framework:** React
--   **Routing:** React Router
--   **Styling:** CSS Modules, Tailwind CSS
+The system is built with a decoupled client-server architecture.
 
-### Backend
--   **Mock API:** json-server
-
-### Development
--   **Package Manager:** npm
+### Frontend (`/frontend`)
+-   **Library:** React
+-   **Language:** TypeScript
 -   **Build Tool:** Vite
--   **Linting:** ESLint
+-   **State Management:** React State & Context
+-   **Styling:** Tailwind CSS & shadcn/ui
+
+### Backend (`/backend`)
+-   **Framework:** Node.js & Express
+-   **Language:** TypeScript
+-   **Database:** (Not yet integrated - have Prisma ORM which adaptable for future improvements with MongoDB, PostgreSQL, etc.)
+
+## 📂 Project Structure
+
+The project is organized as a monorepo with two primary components:
+
+-   `TutorSupportSystem/`
+    -   `backend/`: Contains the server-side source code, handling business logic and APIs.
+    -   `frontend/`: Contains the source code for the client-side user interface.
+
+Each directory (`frontend` and `backend`) is an independent Node.js project with its own dependencies and scripts.
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
--   Node.js (version 16.x or later)
--   `npm`
+-   Node.js (v18.x or later recommended)
+-   `npm` (typically included with Node.js)
 
 ### Installation
 
-1.  Clone this repository to your local machine:
+1.  **Clone the repository:**
     ```sh
     git clone https://github.com/ukulevi/CNPM-TutorSystem.git
-    ```
-2.  Navigate to the project directory and install the dependencies:
-    ```sh
     cd CNPM-TutorSystem
-    npm i
     ```
 
-### Running the Project
-
-1.  **Start the Backend (API Server):**
-    Open a terminal and run the following command in the `backend` directory to start `json-server`.
+2.  **Set up the Backend:**
+    Navigate to the `backend` directory and install the required dependencies.
     ```sh
+    cd backend
+    npm install
+    ```
+
+3.  **Set up the Frontend:**
+    Return to the root directory, then navigate to the `frontend` directory and install its dependencies.
+    ```sh
+    cd ../frontend
+    npm install
+    ```
+
+### Running the Application
+
+You will need two separate terminal windows to run both the backend and frontend servers concurrently.
+
+1.  **Start the Backend Server:**
+    In the `backend` directory, run the following command to start the API server. The server will automatically restart on code changes.
+    ```sh
+    cd backend
     npm run dev
     ```
-    The API will be available at `http://localhost:3001` (or the configured port).
+    The server will be available at `http://localhost:3001`.
 
-2.  **Start the Frontend (User Interface):**
-    Open another terminal and run the following command in the `frontend` directory.
+2.  **Start the Frontend Application:**
+    In the `frontend` directory, run the following command to launch the user interface.
     ```sh
+    cd frontend
     npm run dev
     ```
-    Then, open your browser and navigate to the provided address (usually `http://localhost:3000` or similar).
+    Open your browser and navigate to the address provided (usually `http://localhost:3000`).

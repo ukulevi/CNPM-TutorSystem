@@ -1,23 +1,23 @@
-import { UpcomingRequest, TutorStats, Session, Evaluation } from '../types';
-import db from '../../db.json';
+import { UpcomingRequest, TutorStats } from '../types';
+
+const API_URL = 'http://localhost:3001';
 
 /**
  * Lấy dữ liệu cho trang chủ của giảng viên.
  */
 export const getTutorDashboardData = async (tutorId: string): Promise<{ stats: TutorStats; requests: UpcomingRequest[] }> => {
-  // @ts-ignore
-  const appointments = db.appointments
-    .filter(a => a.tutorId === tutorId && a.status === 'booked')
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  // @ts-ignore 
-  const evaluations = db.evaluations.filter((e: any) => e.tutorId === tutorId);
+  const appointmentsRes = await fetch(`${API_URL}/api/schedule/appointments?tutorId=${tutorId}&status=booked&_sort=date&_order=asc`);
+  const appointments = await appointmentsRes.json();
+
+  const evaluationsRes = await fetch(`${API_URL}/api/evaluations?tutorId=${tutorId}`);
+  const evaluations = await evaluationsRes.json();
 
   // Tính toán các chỉ số
   const totalSessions = appointments.length;
   const upcomingSessions = appointments.filter((a: any) => a.status === 'booked' || a.status === 'available').length;
   const totalStudents = new Set(appointments.map((a: any) => a.studentId).filter(Boolean)).size;
   const averageRating = evaluations.length > 0
-    ? (evaluations.reduce((sum, e) => sum + e.rating, 0) / evaluations.length).toFixed(1)
+    ? (evaluations.reduce((sum: number, e: { rating: number }) => sum + e.rating, 0) / evaluations.length).toFixed(1)
     : 0;
 
   const stats: TutorStats = {
@@ -43,5 +43,5 @@ export const getTutorDashboardData = async (tutorId: string): Promise<{ stats: T
     });
   }
 
-  return Promise.resolve({ stats, requests });
+  return { stats, requests };
 };

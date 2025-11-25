@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { Badge } from '../../components/ui/badge';
 import { Sidebar } from '../../components/shared/Sidebar';
-import { getStudentUpcomingAppointments } from '../../api/studentApi';
+import { getStudentUpcomingAppointments } from '../profile/api/studentApi';
 import { Session, Tutor } from '../../types';
 
 type StudentDashboardProps = {
@@ -23,7 +23,7 @@ export function StudentDashboard({ onNavigate, onLogout, onEvaluate, onSelectTut
   useEffect(() => {
     const fetchAppointments = async () => {
       setIsLoading(true);
-      const appointments = await getStudentUpcomingAppointments('student-01'); // ID sinh viên giả lập
+      const appointments = await getStudentUpcomingAppointments('student-1'); // ID sinh viên giả lập
       setUpcomingAppointments(appointments);
       setIsLoading(false);
     };

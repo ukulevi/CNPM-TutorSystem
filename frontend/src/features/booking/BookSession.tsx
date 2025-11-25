@@ -13,7 +13,7 @@ import {
   DialogTitle,
 } from '../../components/ui/dialog';
 import { Sidebar } from '../../components/shared/Sidebar';
-import { createSession, getTutorAvailableSchedule } from '../../api/bookingApi';
+import { createSession, getTutorAvailableSchedule } from './api/bookingApi';
 import { Tutor, Session, AppointmentSlot } from '../../types';
 
 type BookSessionProps = {

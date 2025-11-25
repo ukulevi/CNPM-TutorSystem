@@ -1,36 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LoginPage } from './features/authentication/LoginPage.tsx';
 import { StudentDashboard } from './features/dashboard/StudentDashboard.tsx';
 import { FindTutor } from './features/search/FindTutor.tsx';
 import { BookSession } from './features/booking/BookSession.tsx';
 import { TutorDashboard } from './features/dashboard/TutorDashboard.tsx';
-import { MySchedulePage } from './components/MySchedulePage.tsx';
+import { TutorSchedulePage } from './features/schedule/TutorSchedulePage.tsx';
 import { StudentSchedulePage } from './features/schedule/StudentSchedulePage.tsx';
 import { UserSearch } from './features/search/UserSearch.tsx';
 import { UserProfile } from './features/profile/UserProfile.tsx'; // Đã sửa ở các bước trước
 import { DocumentsPage } from './features/documents/DocumentsPage.tsx';
 import { EvaluateSession } from './features/booking/EvaluateSession.tsx';
-import { UserRole, Tutor, Session } from './types';
+import { UserRole, Tutor, Session, User } from './types';
 
 function App() {
   const [currentPage, setCurrentPage] = useState<string>('login');
   const [userRole, setUserRole] = useState<UserRole>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [previousPage, setPreviousPage] = useState<string>('login');
   const [selectedTutor, setSelectedTutor] = useState<Tutor | null>(null);
   const [viewingProfileId, setViewingProfileId] = useState<string | null>(null);
   const [sessionToEvaluate, setSessionToEvaluate] = useState<Session | null>(null);
 
-  const handleLogin = (role: UserRole) => {
-    setUserRole(role);
-    if (role === 'student') {
+  const handleLogin = (user: User) => {
+    setCurrentUser(user);
+    setUserRole(user.role);
+    if (user.role === 'student') {
       setCurrentPage('student-dashboard');
-    } else if (role === 'tutor') {
+    } else if (user.role === 'tutor') {
       setCurrentPage('tutor-dashboard');
     }
   };
 
   const handleLogout = () => {
     setUserRole(null);
+    setCurrentUser(null);
     setCurrentPage('login');
     setSelectedTutor(null);
     setViewingProfileId(null);
@@ -73,7 +76,7 @@ function App() {
   };
 
   // ID người dùng giả lập
-  const currentUserId = userRole === 'tutor' ? '1' : 'student-01';
+  const currentUserId = currentUser ? currentUser.id : '';
 
   return (
     <div className="min-h-screen bg-white">
@@ -92,10 +95,10 @@ function App() {
         <TutorDashboard onNavigate={handleNavigate} onLogout={handleLogout} />
       )}
       {currentPage === 'my-schedule' && userRole === 'tutor' && (
-        <MySchedulePage userRole={userRole} onNavigate={handleNavigate} onGoBack={handleGoBack} />
+        <TutorSchedulePage userRole={userRole} onNavigate={handleNavigate} onGoBack={handleGoBack} />
       )}
       {currentPage === 'edit-schedule' && userRole === 'tutor' && (
-        <MySchedulePage userRole={userRole} onNavigate={handleNavigate} onGoBack={handleGoBack} />
+        <TutorSchedulePage userRole={userRole} onNavigate={handleNavigate} onGoBack={handleGoBack} />
       )}
       {currentPage === 'student-schedule' && userRole === 'student' && (
         <StudentSchedulePage userRole={userRole} onNavigate={handleNavigate} onGoBack={handleGoBack} />
