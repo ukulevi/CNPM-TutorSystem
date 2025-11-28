@@ -1,4 +1,4 @@
-import { UpcomingRequest, TutorStats } from '../types';
+import { UpcomingRequest, TutorStats } from '../../../types';
 
 const API_URL = 'http://localhost:3001';
 

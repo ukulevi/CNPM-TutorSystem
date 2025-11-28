@@ -5,6 +5,8 @@ const dbPath = path.resolve(__dirname, '../../../db/db.json');
 
 interface Profile {
     id: string;
+    name: string;
+    email: string;
     // Add other profile properties here
 }
 
