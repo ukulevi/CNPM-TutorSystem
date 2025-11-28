@@ -13,7 +13,8 @@ export const getEvaluationsByTutor = (req: Request, res: Response) => {
     try {
         const evaluations = evaluationsService.getEvaluationsByTutor(tutorId as string);
         if (evaluations) {
-            return res.json(evaluations);
+            console.log(evaluations);
+            return res.status(200).json(evaluations);
         }
         return res.status(404).json({ message: 'Evaluations not found for this tutor' });
     } catch (error: any) {
