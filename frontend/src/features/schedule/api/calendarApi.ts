@@ -129,26 +129,6 @@ export const getScheduleForTutor = async (
     
     return {day: dayInfo.day, date: dayInfo.date, hours};
   });
-
-  // const workHours = ['17:00', '18:00', '19:00', '20:00', '21:00', '22:00'];
-
-  // const calendar: CalendarDay[] = weekDates.map(dayInfo => {
-  //   const hours: CalendarHour[] = workHours.map(hour => {
-  //     const appointment = appointments.find((apt: any) => apt.date === dayInfo.date && apt.time === hour);
-  //     let slot: CalendarSlot | null = null;
-  //     if (appointment) {
-  //       slot = {
-  //         id: appointment.id,
-  //         subject: appointment.subject,
-  //         status: appointment.status as 'booked' | 'available',
-  //         studentName: appointment.studentName,
-  //       };
-  //     }
-  //     return { hour, slot };
-  //   });
-  //   return { day: dayInfo.day, date: dayInfo.date, hours };
-  // });
-
   return calendar;
 };
 
@@ -253,3 +233,14 @@ export const cancelAppointment = async (appointmentId: string): Promise<boolean>
     });
     return response.ok;
 };
+
+export const createAppointment = async (data: any): Promise<boolean> => {
+  const response = await fetch(`${API_URL}/schedule/appointments`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  return response.ok;
+}

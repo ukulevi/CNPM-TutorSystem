@@ -42,7 +42,7 @@ export const getAppointments = (req: Request, res: Response) => {
 };
 
 export const createAppointment = (req: Request, res: Response) => {
-    const {tutorId, subject, date, time, type} = req.body;
+    const {tutorId, subject, date, time, type, status} = req.body;
 
     const studentId = 'student-1';
 
@@ -60,12 +60,12 @@ export const createAppointment = (req: Request, res: Response) => {
         const appointmentData = {
             tutorId: tutor.id,
             tutorName: tutor.name,
-            studentId: student.id,
-            studentName: student.name,
+            studentId: 'placeholder',
+            studentName: '',
             subject: subject,
             date: date, // Retrieved from req.body
             time: time, // Retrieved from req.body
-            status: 'booked', // Always 'booked' as requested
+            status: status, // Always 'booked' as requested
             type: type || 'online', // Use type from body/query or default
         };
 

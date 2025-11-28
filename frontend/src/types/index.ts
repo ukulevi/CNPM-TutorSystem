@@ -53,7 +53,7 @@ export type CalendarHour = {
 export type CalendarSlot = {
   id:string;
   subject: string; // Đổi 'title' thành 'subject' cho nhất quán
-  status: 'available' | 'booked' | 'personal';
+  status: 'available' | 'booked' | 'personal' | 'completed';
   studentName?: string;
   tutorName?: string;
 };
