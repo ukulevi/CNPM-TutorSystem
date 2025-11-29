@@ -1,4 +1,4 @@
-import { CalendarDay, CalendarHour, CalendarSlot } from "../../../types";
+import { CalendarDay, CalendarHour, CalendarSlot, Evaluation } from "../../../types";
 import {addDays, format, parseISO} from 'date-fns';
 import {enUS} from 'date-fns/locale';
 
@@ -206,7 +206,7 @@ export const addAvailableSlot = async (tutorId: string, date: string, hour: stri
 
 /**
  * Giảng viên xóa một slot thời gian rảnh.
- */
+ */ 
 export const deleteAvailableSlot = async (tutorId: string, date: string, hour: string): Promise<boolean> => {
     const query = `tutorId=${tutorId}&date=${date}&time=${hour}&status=available`;
     const slotsRes = await fetch(`${API_URL}/schedule/appointments?${query}`);
@@ -243,4 +243,16 @@ export const createAppointment = async (data: any): Promise<boolean> => {
     body: JSON.stringify(data),
   });
   return response.ok;
+}
+
+export const getEvaluationById = async (evalId: string): Promise<Evaluation | undefined> => {
+  const response = await fetch(`${API_URL}/evaluations/${evalId}`);
+
+  if (!response.ok) {
+    return;
+  }
+
+  const evaluation = await response.json();
+
+  return evaluation;
 }
