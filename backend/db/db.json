@@ -1,5 +1,5 @@
 {
-  "profiles": [
+  "users": [
     {
       "id": "tutor-1",
       "name": "PGS.TS Nguyễn Thành Công",
@@ -177,6 +177,14 @@
       "major": "An toàn thông tin",
       "cohort": "K2023",
       "avatar": ""
+    },
+    {
+      "id": "admin-1",
+      "name": "Quản Trị Viên",
+      "email": "admin@tutorsupport.system",
+      "role": "admin",
+      "department": "Ban Quản Trị",
+      "avatar": "https://i.pravatar.cc/150?u=admin-1"
     }
   ],
   "departments": [
@@ -262,5 +270,11 @@
     { "id": "notif-3", "userId": "student-1", "message": "Buổi hẹn 'Giải đáp bài tập lớn' của bạn với GS.TS Hoàng An đã bị hủy bởi giảng viên.", "date": "2025-11-20T11:06:00Z", "isRead": true, "link": "/schedule" },
     { "id": "notif-4", "userId": "tutor-1", "message": "Bạn đã nhận được đánh giá mới từ sinh viên Nguyễn Văn An cho buổi hẹn ngày 25/10.", "date": "2025-10-25T15:00:00Z", "isRead": true, "link": "/dashboard" },
     { "id": "notif-5", "userId": "student-2", "message": "Lịch hẹn 'Hướng dẫn cấu trúc project' với PGS.TS Nguyễn Thành Công sắp diễn ra.", "date": "2025-11-29T08:30:00Z", "isRead": false, "link": "/schedule" }
+  ],
+  "systemSettings": [
+    {
+      "id": "sync-log",
+      "lastSyncTime": "2025-11-28T10:00:00Z"
+    }
   ]
 }

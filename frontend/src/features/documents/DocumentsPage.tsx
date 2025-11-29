@@ -13,7 +13,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Document as Doc } from '../../types';
 
 type DocumentsPageProps = {
-  userRole: 'student' | 'tutor';
+  userRole: 'student' | 'tutor' | 'admin';
   currentUserId: string; // Thêm ID của người dùng hiện tại
   onNavigate: (page: string) => void;
   onGoBack: () => void;

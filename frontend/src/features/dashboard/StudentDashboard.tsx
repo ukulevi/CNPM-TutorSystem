@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, Video, Search, FileText } from 'lucide-react';
+import { Calendar, Clock, Video, Search, FileText, Star } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { Badge } from '../../components/ui/badge';
 import { Sidebar } from '../../components/shared/Sidebar';
-import { getStudentUpcomingAppointments } from '../profile/api/studentApi';
+import { getStudentUpcomingAppointments, getStudentCompletedAppointments } from '../profile/api/studentApi';
 import { Session, Tutor } from '../../types';
 
 type StudentDashboardProps = {
@@ -18,13 +18,19 @@ type StudentDashboardProps = {
 
 export function StudentDashboard({ onNavigate, onLogout, onEvaluate, onSelectTutor, onSelectUser }: StudentDashboardProps) {
   const [upcomingAppointments, setUpcomingAppointments] = useState<Session[]>([]);
+  const [completedAppointments, setCompletedAppointments] = useState<Session[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchAppointments = async () => {
       setIsLoading(true);
-      const appointments = await getStudentUpcomingAppointments('student-1'); // ID sinh viên giả lập
-      setUpcomingAppointments(appointments);
+      const studentId = 'student-1'; // ID sinh viên giả lập
+      const [upcoming, completed] = await Promise.all([
+        getStudentUpcomingAppointments(studentId),
+        getStudentCompletedAppointments(studentId),
+      ]);
+      setUpcomingAppointments(upcoming);
+      setCompletedAppointments(completed);
       setIsLoading(false);
     };
     fetchAppointments();
@@ -104,20 +110,27 @@ export function StudentDashboard({ onNavigate, onLogout, onEvaluate, onSelectTut
               <CardTitle className="text-[#003366]">Buổi hẹn cần đánh giá</CardTitle>
             </CardHeader>
               <CardContent className="space-y-3">
-                <Button
-                  onClick={() => onNavigate('find-tutor')}
-                  className="w-full bg-[#4DB8FF] hover:bg-[#3DA8EF] justify-start"
-                >
-                  <Search className="w-5 h-5 mr-3" />
-                  Tìm Tutor mới
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full border-[#003366] text-[#003366] justify-start"
-                >
-                  <FileText className="w-5 h-5 mr-3" />
-                  Xem tài liệu học tập
-                </Button>
+              {isLoading && <p>Đang tải...</p>}
+              {!isLoading && completedAppointments.length > 0 ? (
+                completedAppointments.map(session => (
+                  <div key={session.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div>
+                      <p className="font-semibold">{session.subject}</p>
+                      <p className="text-sm text-gray-500">với {session.tutorName} vào {session.date}</p>
+                    </div>
+                    <Button
+                      size="sm"
+                      onClick={() => onEvaluate(session)}
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white"
+                    >
+                      <Star className="w-4 h-4 mr-2" />
+                      Đánh giá
+                    </Button>
+                  </div>
+                ))
+              ) : (
+                !isLoading && <p className="text-gray-500 italic">Bạn không có buổi hẹn nào cần đánh giá.</p>
+              )}
               </CardContent>
             </Card>
         </div>
