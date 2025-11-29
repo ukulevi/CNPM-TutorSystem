@@ -589,20 +589,52 @@
       {
         "day": "Monday",
         "slots": [
-          "09:00-11:00",
-          "14:00-16:00"
+          {
+            "hour": "09:00",
+            "status": "booked",
+            "subject": "Tư vấn chọn đề tài",
+            "studentName": "Nguyễn Văn An"
+          },
+          {
+            "hour": "10:00",
+            "status": "available"
+          },
+          {
+            "hour": "14:00",
+            "status": "available"
+          },
+          {
+            "hour": "15:00",
+            "status": "available"
+          }
         ]
       },
       {
         "day": "Wednesday",
         "slots": [
-          "09:00-11:00"
+          {
+            "hour": "09:00",
+            "status": "available"
+          },
+          {
+            "hour": "10:00",
+            "status": "booked",
+            "subject": "Review Đồ án KTPM",
+            "studentName": "Nguyễn Văn An"
+          }
         ]
       },
       {
         "day": "Friday",
         "slots": [
-          "14:00-16:00"
+          {
+            "hour": "14:00",
+            "status": "available"
+          },
+          {
+            "hour": "15:00",
+            "status": "available"
+          }
         ]
       }
     ],

@@ -1,8 +1,18 @@
 import { CalendarDay, CalendarHour, CalendarSlot, Evaluation } from "../../../types";
-import {addDays, format, parseISO} from 'date-fns';
-import {enUS} from 'date-fns/locale';
+import { addDays, format, parseISO } from 'date-fns';
+import { da, enUS } from 'date-fns/locale';
 
 const API_URL = 'http://localhost:3001/api';
+
+export type ScheduleDay = {
+  day: string;
+  slots: {
+    hour: string,
+    status: 'available' | 'booked' | 'completed' | null, // Extended status
+    subject?: string,
+    studentName?: string
+  }[]
+};
 
 const DayNameMap: { [key: number]: { vn: string, en: string } } = {
   0: { vn: 'Chủ Nhật', en: 'Sunday' },
@@ -13,6 +23,12 @@ const DayNameMap: { [key: number]: { vn: string, en: string } } = {
   5: { vn: 'Thứ 6', en: 'Friday' },
   6: { vn: 'Thứ 7', en: 'Saturday' },
 };
+
+const ALL_HOURS = [
+  '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
+  '13:00', '14:00', '15:00', '16:00', '17:00',
+  '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'
+];
 
 const getVietnameseDayName = (date: Date): string => {
   // date.getDay() returns 0 for Sunday, 1 for Monday, ..., 6 for Saturday
@@ -38,7 +54,7 @@ const convertVnToEnDayName = (vnDayName: string): string | null => {
 const convertSlotToHours = (slot: string): string[] => {
   const [start, end] = slot.split('-');
   const hours: string[] = [];
-  
+
   let currentHour = parseInt(start.substring(0, 2), 10);
   const endHour = parseInt(end.substring(0, 2), 10);
 
@@ -55,9 +71,8 @@ const convertSlotToHours = (slot: string): string[] => {
  */
 export const getScheduleForTutor = async (
   tutorId: string,
-  viewerId: string,
-  viewerRole: 'student' | 'tutor'
-): Promise<CalendarDay[]> => {
+  viewerId: string
+): Promise<ScheduleDay[] | undefined> => {
   const tutorProfileRes = await fetch(`${API_URL}/profile/${tutorId}`);
   if (!tutorProfileRes.ok) {
     // Handle case where tutor profile is not found
@@ -76,60 +91,48 @@ export const getScheduleForTutor = async (
   const appointmentsRes = await fetch(`${API_URL}/schedule/appointments?tutorId=${tutorId}`);
   const appointments = await appointmentsRes.json();
 
-  const mockDay = '2025-11-24';
-  const maxWorkingDays = 7;
-  let workDates: { day: string, date: string }[] = [];
-  let currentDate = new Date(mockDay);
-  let daysChecked = 0;
+  let date = new Date();
 
-  while (workDates.length < maxWorkingDays && daysChecked < 30) {
-    const englishDayName = getDayNameInEnglish(currentDate); // e.g., "Monday"
-    const vietnameseDayName = getVietnameseDayName(currentDate); // e.g., "Thứ 2"
-    
-    const scheduleEntry = schedule.find((item: any) => item.day === englishDayName);
-
-    if (scheduleEntry && scheduleEntry.slots.length > 0) {
-      workDates.push({
-        day: vietnameseDayName,
-        date: format(currentDate, 'yyyy-MM-dd'),
-      });
-    }
-
-    currentDate = addDays(currentDate, 1);
-    daysChecked++;
+  const WEEK: { day: string, date: string, engDay: string }[] = [];
+  for (let i = 0; i < 7; i++) {
+    const dayName = getVietnameseDayName(date);
+    const engDayName = getDayNameInEnglish(date);
+    WEEK.push({ day: dayName, date: format(date, 'yyyy-MM-dd'), engDay: engDayName });
+    date = addDays(date, 1);
   }
 
-  const calendar: CalendarDay[] = workDates.map(dayInfo => {
-    const englishDayName = format(parseISO(dayInfo.date), 'EEEE', { locale: enUS });
-    const scheduleEntry = schedule.find((item: any ) => item.day === englishDayName);
+  const calendar: ScheduleDay[] = WEEK.map(dayInfo => {
+    const scheduleEntry = schedule.find((item: any) => item.day === dayInfo.engDay);
+    const scheduledHours = scheduleEntry ? scheduleEntry.slots : [];
 
-    let workHours: string[] = [];
-    if (scheduleEntry) {
-        scheduleEntry.slots.forEach((slot: string) => {
-            workHours = workHours.concat(convertSlotToHours(slot));
-        });
-    }
+    const slots: ScheduleDay['slots'] = ALL_HOURS.map(hour => {
+      let slot = scheduledHours.find((s: { hour: string; }) => s.hour === hour);
 
-    workHours = [...new Set(workHours)].sort();
-
-    const hours: CalendarHour[] = workHours.map(hour => {
-      const appointment = appointments.find((apt: any) => apt.date === dayInfo.date && apt.time === hour);
-      let slot: CalendarSlot | null = null;
-
-      if (appointment) {
-        slot = {
-          id: appointment.id,
-          subject: appointment.subject,
-          status: appointment.status as 'booked' | 'available',
-          studentName: appointment.studentName,
+      if (slot.status === 'booked') {
+        return {
+          hour: hour,
+          status: 'booked',
+          subject: slot.subject,
+          studentName: slot.studentName
         };
       }
-      return {hour, slot};
+      else if (slot.status === 'available') {
+        return {
+          hour: hour,
+          status: 'available'
+        }
+      }
+      else return {
+        hour: hour,
+        status: null
+      }
     });
-    
-    return {day: dayInfo.day, date: dayInfo.date, hours};
+
+    return { day: dayInfo.day, slots: slots };
   });
+
   return calendar;
+
 };
 
 /**
@@ -142,7 +145,7 @@ export const getScheduleForStudent = async (
   const appointments = await appointmentsRes.json();
 
   // Logic to create calendar data remains the same
-    const weekDates = [
+  const weekDates = [
     { day: 'Thứ 2', date: '2025-11-10' },
     { day: 'Thứ 3', date: '2025-11-11' },
     { day: 'Thứ 4', date: '2025-11-12' },
@@ -206,32 +209,32 @@ export const addAvailableSlot = async (tutorId: string, date: string, hour: stri
 
 /**
  * Giảng viên xóa một slot thời gian rảnh.
- */ 
+ */
 export const deleteAvailableSlot = async (tutorId: string, date: string, hour: string): Promise<boolean> => {
-    const query = `tutorId=${tutorId}&date=${date}&time=${hour}&status=available`;
-    const slotsRes = await fetch(`${API_URL}/schedule/appointments?${query}`);
-    const slots = await slotsRes.json();
+  const query = `tutorId=${tutorId}&date=${date}&time=${hour}&status=available`;
+  const slotsRes = await fetch(`${API_URL}/schedule/appointments?${query}`);
+  const slots = await slotsRes.json();
 
-    if (slots.length === 0) {
-        return false;
-    }
-    const slotId = slots[0].id;
+  if (slots.length === 0) {
+    return false;
+  }
+  const slotId = slots[0].id;
 
-    const response = await fetch(`${API_URL}/schedule/appointments/${slotId}`, {
-        method: 'DELETE',
-    });
+  const response = await fetch(`${API_URL}/schedule/appointments/${slotId}`, {
+    method: 'DELETE',
+  });
 
-    return response.ok;
+  return response.ok;
 };
 
 /**
  * Sinh viên hủy một buổi hẹn đã đặt.
  */
 export const cancelAppointment = async (appointmentId: string): Promise<boolean> => {
-    const response = await fetch(`${API_URL}/schedule/appointments/${appointmentId}`, {
-        method: 'DELETE',
-    });
-    return response.ok;
+  const response = await fetch(`${API_URL}/schedule/appointments/${appointmentId}`, {
+    method: 'DELETE',
+  });
+  return response.ok;
 };
 
 export const createAppointment = async (data: any): Promise<boolean> => {
@@ -255,4 +258,10 @@ export const getEvaluationById = async (evalId: string): Promise<Evaluation | un
   const evaluation = await response.json();
 
   return evaluation;
+}
+
+export const freeSlot = async (tutorId: string, day: string, hour: string) => {
+  const response = await fetch(`${API_URL}/schedule`, {
+    method: 
+  })
 }
