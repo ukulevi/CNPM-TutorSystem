@@ -1,4 +1,4 @@
-import { Session } from '../types';
+import { Session } from '../../../types';
 
 const API_URL = 'http://localhost:3001/api';
 
