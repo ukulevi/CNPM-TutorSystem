@@ -1,4 +1,4 @@
-import { UpcomingRequest, TutorStats } from '../types';
+import { UpcomingRequest, TutorStats } from '../../../types';
 
 const API_URL = 'http://localhost:3001';
 
@@ -14,7 +14,8 @@ export const getTutorDashboardData = async (tutorId: string): Promise<{ stats: T
 
   // Tính toán các chỉ số
   const totalSessions = appointments.length;
-  const upcomingSessions = appointments.filter((a: any) => a.status === 'booked' || a.status === 'available').length;
+  const upcomingSessions = appointments.filter((a: any) => a.status === 'booked' || a.status === 'available');
+  const upcomingSessionsCount = upcomingSessions.length;
   const totalStudents = new Set(appointments.map((a: any) => a.studentId).filter(Boolean)).size;
   const averageRating = evaluations.length > 0
     ? (evaluations.reduce((sum: number, e: { rating: number }) => sum + e.rating, 0) / evaluations.length).toFixed(1)
@@ -22,26 +23,35 @@ export const getTutorDashboardData = async (tutorId: string): Promise<{ stats: T
 
   const stats: TutorStats = {
     totalSessions: totalSessions,
-    upcomingSessions: upcomingSessions,
+    upcomingSessions: upcomingSessionsCount,
     totalStudents,
     totalAppointments: totalSessions,
     averageRating: Number(averageRating)
   };
 
-  // Lấy yêu cầu từ buổi hẹn gần nhất
-  const nextAppointment = appointments[0];
-  const requests: UpcomingRequest[] = [];
+  const requests: UpcomingRequest[] = upcomingSessions.map((appointment: any) => ({
+    id: appointment.id,
+    studentName: appointment.studentName,
+    subject: appointment.subject,
+    date: appointment.date,
+    time: appointment.time,
+    type: appointment.type as 'online' | 'offline',
+  }));
 
-  if (nextAppointment) {
-    requests.push({
-      id: nextAppointment.id,
-      studentName: nextAppointment.studentName,
-      subject: nextAppointment.subject,
-      date: nextAppointment.date,
-      time: nextAppointment.time,
-      type: nextAppointment.type as 'online' | 'offline',
-    });
-  }
+  // // Lấy yêu cầu từ buổi hẹn gần nhất
+  // const nextAppointment = appointments[0];
+  // const requests: UpcomingRequest[] = [];
+
+  // if (nextAppointment) {
+  //   requests.push({
+  //     id: nextAppointment.id,
+  //     studentName: nextAppointment.studentName,
+  //     subject: nextAppointment.subject,
+  //     date: nextAppointment.date,
+  //     time: nextAppointment.time,
+  //     type: nextAppointment.type as 'online' | 'offline',
+  //   });
+  // }
 
   return { stats, requests };
 };

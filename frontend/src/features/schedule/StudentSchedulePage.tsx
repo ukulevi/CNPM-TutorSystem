@@ -8,7 +8,7 @@ import { CalendarDay, CalendarHour, CalendarSlot } from '../../types';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 
 type StudentSchedulePageProps = {
-  userRole: 'student'; // Chỉ dành cho Student
+  userRole: 'student' | 'tutor' | 'admin';
   onNavigate: (page: string) => void;
   onGoBack: () => void;
 };
@@ -19,7 +19,7 @@ export function StudentSchedulePage({ userRole, onNavigate, onGoBack }: StudentS
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [slotToCancel, setSlotToCancel] = useState<{ day: string; date: string; hour: string; slot: CalendarSlot } | null>(null);
 
-  const studentId = 'student-01'; // ID Sinh viên giả lập
+  const studentId = 'student-1'; // ID Sinh viên giả lập
 
   const fetchSchedule = async () => {
     setIsLoading(true);

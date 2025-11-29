@@ -7,7 +7,16 @@
     "esModuleInterop": true, // Cho phép tương tác tốt hơn giữa các loại module
     "forceConsistentCasingInFileNames": true,
     "strict": true, // Bật tất cả các quy tắc kiểm tra kiểu nghiêm ngặt
-    "skipLibCheck": true // Bỏ qua việc kiểm tra kiểu của các file thư viện
+    "skipLibCheck": true, // Bỏ qua việc kiểm tra kiểu của các file thư viện
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["src/**/*"] // Chỉ biên dịch các file trong thư mục src
+  "include": ["src/**/*"], // Chỉ biên dịch các file trong thư mục src
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
 }

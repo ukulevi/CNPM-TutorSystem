@@ -30,7 +30,7 @@ type UserProfileData = {
   avatar?: string;
   department?: string;
   officeLocation?: string;
-  role: 'student' | 'tutor';
+  role: 'student' | 'tutor' | 'admin';
   rating?: number;
   specialization?: string;
   publications?: { title: string; link: string; public: boolean }[];
@@ -45,7 +45,7 @@ type UserProfileData = {
 type UserProfileProps = {
   profileId: string; // ID của người dùng cần xem hồ sơ
   currentUserId: string; // ID của người dùng đang đăng nhập
-  userRole: 'student' | 'tutor';
+  userRole: 'student' | 'tutor' | 'admin';
   onNavigate: (page: string) => void;
   onSelectTutor: (tutor: Tutor) => void;
   onGoBack: () => void;
