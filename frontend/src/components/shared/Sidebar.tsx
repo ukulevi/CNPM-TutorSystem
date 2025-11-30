@@ -1,3 +1,5 @@
+// Sidebar navigation component used across the application
+// Displays different menu items based on user role (student or tutor)
 import { Home, Search, FileText, User, LogOut, Calendar, Users } from 'lucide-react';
 import { Button } from '../ui/button';
 
@@ -46,7 +48,8 @@ export function Sidebar({ userRole, userName, currentPage, onNavigate, onLogout 
       <nav className="flex-1 p-4">
         {menuItems.map((item) => {
           const Icon = item.icon;
-          const isActive = currentPage === item.id;
+          // Check if current item is active: match both exact ID and profile-related pages
+          const isActive = currentPage === item.id || (item.id === 'profile' && currentPage === 'profile-view');
           return (
             <button
               key={item.id}

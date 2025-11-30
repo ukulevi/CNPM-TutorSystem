@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { LoginPage } from './features/authentication/LoginPage.tsx';
 import { StudentDashboard } from './features/dashboard/StudentDashboard.tsx';
+import AdminDashboard from './features/dashboard/AdminDashboard.tsx';
 import { FindTutor } from './features/search/FindTutor.tsx';
 import { BookSession } from './features/booking/BookSession.tsx';
 import { TutorDashboard } from './features/dashboard/TutorDashboard.tsx';
@@ -23,8 +24,12 @@ function App() {
 
   const handleLogin = (user: User) => {
     setCurrentUser(user);
-    setUserRole(user.role);
-    if (user.role === 'student') {
+    // Preserve the actual role (so admin remains 'admin') and let effectiveRole
+    // map admin to a UI-facing role for components that expect 'student'|'tutor'.
+    setUserRole(user.role as UserRole);
+    if (user.role === 'admin') {
+      setCurrentPage('admin-dashboard');
+    } else if (user.role === 'student') {
       setCurrentPage('student-dashboard');
     } else if (user.role === 'tutor') {
       setCurrentPage('tutor-dashboard');
@@ -81,11 +86,14 @@ function App() {
   return (
     <div className="min-h-screen bg-white">
       {currentPage === 'login' && <LoginPage onLogin={handleLogin} />}
+      {currentPage === 'admin-dashboard' && userRole === 'admin' && ( // nhớ sửa sau khi code Admin Dáshboard
+        <AdminDashboard onNavigate={handleNavigate} onLogout={handleLogout} />
+      )}
       {currentPage === 'student-dashboard' && userRole === 'student' && ( // Sửa onSelectTutor thành handleSelectTutor
         <StudentDashboard onNavigate={handleNavigate} onLogout={handleLogout} onEvaluate={handleEvaluate} onSelectTutor={handleSelectTutor} onSelectUser={handleSelectUser} />
       )}
       {/* Xử lý khi nhấn vào mục "Hồ sơ của tôi" trên sidebar */}
-      {currentPage === 'profile' && userRole && (
+      {currentPage === 'profile' && (userRole === 'student' || userRole === 'tutor') && ( /*error fix: profile page is only for userRole as student | tutor when userRole is admin | student | tutor */
         <UserProfile profileId={currentUserId} currentUserId={currentUserId} userRole={userRole} onNavigate={handleNavigate} onSelectTutor={handleBookSession} onGoBack={handleGoBack} />
       )}
       {currentPage === 'find-tutor' && (
@@ -103,13 +111,13 @@ function App() {
       {currentPage === 'student-schedule' && userRole === 'student' && (
         <StudentSchedulePage userRole={userRole} onNavigate={handleNavigate} onGoBack={handleGoBack} />
       )}
-      {currentPage === 'documents' && userRole && (
+      {currentPage === 'documents' && (userRole === 'student' || userRole === 'tutor') && ( /*error fix: profile page is only for userRole as student | tutor when userRole is admin | student | tutor */
         <DocumentsPage userRole={userRole} currentUserId={currentUserId} onNavigate={handleNavigate} onGoBack={handleGoBack} />
       )}
-      {currentPage === 'user-search' && userRole && (
+      {currentPage === 'user-search' && (userRole === 'student' || userRole === 'tutor') && ( /*error fix: profile page is only for userRole as student | tutor when userRole is admin | student | tutor */
         <UserSearch userRole={userRole} onNavigate={handleNavigate} onSelectUser={handleSelectUser} />
       )}
-      {currentPage === 'profile-view' && viewingProfileId && userRole && ( // Sửa onSelectTutor thành handleBookSession
+      {currentPage === 'profile-view' && viewingProfileId && (userRole === 'student' || userRole === 'tutor') && ( // Sửa onSelectTutor thành handleBookSession  /*error fix: profile page is only for userRole as student | tutor when userRole is admin | student | tutor */
         <UserProfile profileId={viewingProfileId} currentUserId={currentUserId} userRole={userRole} onNavigate={handleNavigate} onSelectTutor={handleBookSession} onGoBack={handleGoBack} />
       )}
       {currentPage === 'book-session' && selectedTutor && (
