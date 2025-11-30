@@ -42,7 +42,7 @@ export const getAppointments = (req: Request, res: Response) => {
 };
 
 export const createAppointment = (req: Request, res: Response) => {
-    const {tutorId, subject, date, time, type, status} = req.body;
+    const { tutorId, subject, date, time, type, status } = req.body;
 
     const studentId = 'student-1';
 
@@ -84,8 +84,7 @@ export const createAppointment = (req: Request, res: Response) => {
 
 
 export const cancelAppointment = (req: Request, res: Response) => {
-    const {appointmentId} = req.params;
-    console.log("Cancelling appointment");
+    const { appointmentId } = req.params;
 
     const result = bookingService.deleteAppointment(appointmentId);
 
@@ -96,6 +95,52 @@ export const cancelAppointment = (req: Request, res: Response) => {
     };
 
     return res.status(200).json({
-            message: `Appointment ID: ${appointmentId} deleted successfully`
+        message: `Appointment ID: ${appointmentId} deleted successfully`
+    });
+}
+
+export const freeSlot = (req: Request, res: Response) => {
+    const { tutorId, day, hour } = req.query;
+
+    if (typeof tutorId !== 'string' || typeof day !== 'string' || typeof hour !== 'string') {
+        return res.status(400).json({
+            message: "Missing or invalid parameters. Requires tutorId, day, and hour.",
+            received: { tutorId, day, hour }
         });
+    }
+
+    const result = scheduleService.freeSlot(tutorId, day, hour);
+
+    if (!result) {
+        return res.status(500).json({
+            message: `Failed to free slot ${hour} on ${day}`
+        });
+    };
+
+    return res.status(200).json({
+        message: `Slot ${hour} on ${day} freed successfully`
+    });
+}
+
+export const addAvailableSlot = (req: Request, res: Response) => {
+    const { tutorId, day, hour } = req.body;
+
+    if (!tutorId || !day || !hour) {
+        return res.status(400).json({
+            message: "Missing parameters. Requires tutorId, day, and hour.",
+            received: { tutorId, day, hour }
+        });
+    }
+
+    const result = scheduleService.addAvailableSlot(tutorId as string, day as string, hour as string);
+
+    if (!result) {
+        return res.status(500).json({
+            message: `Failed to set available slot ${hour} on ${day}`
+        });
+    };
+
+    return res.status(200).json({
+        message: `Slot ${hour} on ${day} is now available`
+    });
 }

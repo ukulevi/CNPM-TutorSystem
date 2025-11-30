@@ -589,52 +589,61 @@
       {
         "day": "Monday",
         "slots": [
-          {
-            "hour": "09:00",
-            "status": "booked",
-            "subject": "Tư vấn chọn đề tài",
-            "studentName": "Nguyễn Văn An"
-          },
-          {
-            "hour": "10:00",
-            "status": "available"
-          },
-          {
-            "hour": "14:00",
-            "status": "available"
-          },
-          {
-            "hour": "15:00",
-            "status": "available"
-          }
+          "09:00",
+          "10:00",
+          "14:00",
+          "15:00"
         ]
       },
       {
         "day": "Wednesday",
         "slots": [
-          {
-            "hour": "09:00",
-            "status": "available"
-          },
-          {
-            "hour": "10:00",
-            "status": "booked",
-            "subject": "Review Đồ án KTPM",
-            "studentName": "Nguyễn Văn An"
-          }
+          "07:00"
         ]
       },
       {
         "day": "Friday",
         "slots": [
-          {
-            "hour": "14:00",
-            "status": "available"
-          },
-          {
-            "hour": "15:00",
-            "status": "available"
-          }
+          "09:00"
+        ]
+      },
+      {
+        "day": "Thứ Tư",
+        "slots": [
+          "07:00",
+          "07:00",
+          "07:00",
+          "07:00",
+          "07:00",
+          "07:00",
+          "08:00"
+        ]
+      },
+      {
+        "day": "Thứ Ba",
+        "slots": [
+          "07:00",
+          "07:00"
+        ]
+      },
+      {
+        "day": "Thứ Năm",
+        "slots": [
+          "07:00"
+        ]
+      },
+      {
+        "day": "Thursday",
+        "slots": [
+          "09:00",
+          "13:00",
+          "16:00"
+        ]
+      },
+      {
+        "day": "Tuesday",
+        "slots": [
+          "07:00"
         ]
       }
     ],
