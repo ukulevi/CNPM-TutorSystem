@@ -62,4 +62,21 @@ export class BookingService {
         this.writeDb(db);
         return newAppointment;
     }
+    
+    deleteAppointment(appointmentId: string): boolean {
+        const db = this.readDb();
+        const initialLength = db.appointments.length;
+
+        const updatedAppointments = db.appointments.filter(apt => apt.id !== appointmentId);
+
+
+        if (updatedAppointments.length === initialLength) {
+            return false;
+        }
+
+        db.appointments = updatedAppointments;
+        this.writeDb(db);
+        return true;
+    }
 }
+
