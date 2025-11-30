@@ -24,14 +24,12 @@ function App() {
 
   const handleLogin = (user: User) => {
     setCurrentUser(user);
-    setUserRole(user.role);
-
-    // --- THÊM ĐOẠN NÀY ---
+    // Preserve the actual role (so admin remains 'admin') and let effectiveRole
+    // map admin to a UI-facing role for components that expect 'student'|'tutor'.
+    setUserRole(user.role as UserRole);
     if (user.role === 'admin') {
-    setCurrentPage('admin-dashboard');
-    } 
-    // ---------------------
-    else if (user.role === 'student') {
+      setCurrentPage('admin-dashboard');
+    } else if (user.role === 'student') {
       setCurrentPage('student-dashboard');
     } else if (user.role === 'tutor') {
       setCurrentPage('tutor-dashboard');
@@ -115,7 +113,7 @@ function App() {
           <UserProfile
             profileId={currentUserId}
             currentUserId={currentUserId}
-            userRole={userRole}
+            userRole={userRole as 'student' | 'tutor'}
             onNavigate={handleNavigate}
             onSelectTutor={handleBookSession}
             onGoBack={handleGoBack}
@@ -139,7 +137,7 @@ function App() {
       case 'documents':
         return (
           <DocumentsPage
-            userRole={userRole}
+            userRole={userRole as 'student' | 'tutor'}
             currentUserId={currentUserId}
             onNavigate={handleNavigate}
             onGoBack={handleGoBack}
@@ -148,7 +146,7 @@ function App() {
       case 'user-search':
         return (
           <UserSearch
-            userRole={userRole}
+            userRole={userRole as 'student' | 'tutor'}
             onNavigate={handleNavigate}
             onSelectUser={handleSelectUser}
           />
@@ -158,7 +156,7 @@ function App() {
           <UserProfile
             profileId={viewingProfileId}
             currentUserId={currentUserId}
-            userRole={userRole}
+            userRole={userRole as 'student' | 'tutor'}
             onNavigate={handleNavigate}
             onSelectTutor={handleBookSession}
             onGoBack={handleGoBack}
@@ -192,9 +190,48 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white">
-      {renderContent()}
+      {currentPage === 'login' && <LoginPage onLogin={handleLogin} />}
+      {currentPage === 'admin-dashboard' && userRole === 'admin' && ( // nhớ sửa sau khi code Admin Dáshboard
+        <AdminDashboard onNavigate={handleNavigate} onLogout={handleLogout} />
+      )}
+      {currentPage === 'student-dashboard' && userRole === 'student' && ( // Sửa onSelectTutor thành handleSelectTutor
+        <StudentDashboard onNavigate={handleNavigate} onLogout={handleLogout} onEvaluate={handleEvaluate} onSelectTutor={handleSelectTutor} onSelectUser={handleSelectUser} />
+      )}
+      {/* Xử lý khi nhấn vào mục "Hồ sơ của tôi" trên sidebar */}
+      {currentPage === 'profile' && (userRole === 'student' || userRole === 'tutor') && ( /*error fix: profile page is only for userRole as student | tutor when userRole is admin | student | tutor */
+        <UserProfile profileId={currentUserId} currentUserId={currentUserId} userRole={userRole as 'student' | 'tutor'} onNavigate={handleNavigate} onSelectTutor={handleBookSession} onGoBack={handleGoBack} />
+      )}
+      {currentPage === 'find-tutor' && (
+        <FindTutor onNavigate={handleNavigate} onSelectTutor={handleSelectTutor} />
+      )}
+      {currentPage === 'tutor-dashboard' && userRole === 'tutor' && (
+        <TutorDashboard onNavigate={handleNavigate} onLogout={handleLogout} />
+      )}
+      {currentPage === 'my-schedule' && userRole === 'tutor' && (
+        <TutorSchedulePage userRole={userRole as 'tutor'} onNavigate={handleNavigate} onGoBack={handleGoBack} />
+      )}
+      {currentPage === 'edit-schedule' && userRole === 'tutor' && (
+        <TutorSchedulePage userRole={userRole as 'tutor'} onNavigate={handleNavigate} onGoBack={handleGoBack} />
+      )}
+      {currentPage === 'student-schedule' && userRole === 'student' && (
+        <StudentSchedulePage userRole={userRole} onNavigate={handleNavigate} onGoBack={handleGoBack} />
+      )}
+      {currentPage === 'documents' && (userRole === 'student' || userRole === 'tutor') && ( /*error fix: profile page is only for userRole as student | tutor when userRole is admin | student | tutor */
+        <DocumentsPage userRole={userRole as 'student' | 'tutor'} currentUserId={currentUserId} onNavigate={handleNavigate} onGoBack={handleGoBack} />
+      )}
+      {currentPage === 'user-search' && (userRole === 'student' || userRole === 'tutor') && ( /*error fix: profile page is only for userRole as student | tutor when userRole is admin | student | tutor */
+        <UserSearch userRole={userRole as 'student' | 'tutor'} onNavigate={handleNavigate} onSelectUser={handleSelectUser} />
+      )}
+      {currentPage === 'profile-view' && viewingProfileId && (userRole === 'student' || userRole === 'tutor') && ( // Sửa onSelectTutor thành handleBookSession  /*error fix: profile page is only for userRole as student | tutor when userRole is admin | student | tutor */
+        <UserProfile profileId={viewingProfileId} currentUserId={currentUserId} userRole={userRole as 'student' | 'tutor'} onNavigate={handleNavigate} onSelectTutor={handleBookSession} onGoBack={handleGoBack} />
+      )}
+      {currentPage === 'book-session' && selectedTutor && (
+        <BookSession tutor={selectedTutor} currentUserId={currentUserId} currentUserName="Nguyễn Văn A" onNavigate={handleNavigate} />
+      )}
+      {currentPage === 'evaluate-session' && sessionToEvaluate && (
+        <EvaluateSession session={sessionToEvaluate} onNavigate={handleNavigate} />
+      )}
     </div>
   );
 }
-
 export default App;

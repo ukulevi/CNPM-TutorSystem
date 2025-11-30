@@ -67,40 +67,75 @@ const convertSlotToHours = (slot: string): string[] => {
 export const getScheduleForTutor = async (
   tutorId: string,
   viewerId: string
-): Promise<ScheduleDay[] | undefined> => {
-  const tutorProfileRes = await fetch(`${API_URL}/profile/${tutorId}`);
-  if (!tutorProfileRes.ok) {
-    // Handle case where tutor profile is not found
+): Promise<CalendarDay[] | undefined> => {
+  try {
+    const tutorProfileRes = await fetch(`${API_URL}/profile/${tutorId}`);
+    if (!tutorProfileRes.ok) {
+      console.warn(`Tutor profile ${tutorId} not found`);
+      return [];
+    }
+    const tutorProfile = await tutorProfileRes.json();
+    const isOwner = tutorId === viewerId;
+
+    if (!isOwner && tutorProfile?.scheduleVisibility === 'private') {
+      return [];
+    }
+
+    const scheduleRes = await fetch(`${API_URL}/schedule?tutorId=${tutorId}`);
+    const schedule = await scheduleRes.json();
+
+    const appointmentsRes = await fetch(`${API_URL}/schedule/appointments?tutorId=${tutorId}`);
+    if (!appointmentsRes.ok) {
+      console.warn(`Failed to fetch appointments for tutor ${tutorId}`);
+      return [];
+    }
+    const appointments = await appointmentsRes.json();
+
+    const weekDates: { day: string, engDay: string, date: string }[] = [];
+    let currentDate = new Date();
+    for (let i = 0; i < 7; i++) {
+        weekDates.push({
+            day: getVietnameseDayName(currentDate),
+            engDay: getDayNameInEnglish(currentDate),
+            date: format(currentDate, 'yyyy-MM-dd')
+        });
+        currentDate = addDays(currentDate, 1);
+    }
+
+    const calendar: CalendarDay[] = weekDates.map(dayInfo => {
+      const scheduleEntry = schedule.find((item: any) => item.day === dayInfo.engDay);
+      const availableSlots = scheduleEntry ? scheduleEntry.slots : [];
+
+      const hours: CalendarHour[] = ALL_HOURS.map(hour => {
+        const appointment = appointments.find((apt: any) => apt.date === dayInfo.date && apt.time === hour);
+        let slot: CalendarSlot | null = null;
+
+        if (appointment) {
+          slot = {
+            id: appointment.id,
+            subject: appointment.subject,
+            status: 'booked',
+            studentName: appointment.studentName,
+            tutorName: appointment.tutorName,
+          };
+        } else if (availableSlots.includes(hour)) {
+          slot = {
+            id: `${tutorId}-${dayInfo.date}-${hour}`,
+            status: 'available',
+            subject: 'Có thể đặt lịch',
+          };
+        }
+        return { hour, slot };
+      });
+
+      return { day: dayInfo.day, date: dayInfo.date, hours };
+    });
+
+    return calendar;
+  } catch (error) {
+    console.error(`Error fetching tutor schedule for ${tutorId}:`, error);
     return [];
   }
-  const tutorProfile = await tutorProfileRes.json();
-  const isOwner = tutorId === viewerId;
-
-  if (!isOwner && tutorProfile?.scheduleVisibility === 'private') {
-    return [];
-  }
-  const scheduleRes = await fetch(`${API_URL}/schedule?tutorId=${tutorId}`);
-  const schedule = await scheduleRes.json();
-
-  const appointmentsRes = await fetch(`${API_URL}/schedule/appointments?tutorId=${tutorId}`);
-  const appointments = await appointmentsRes.json();
-
-  let date = new Date();
-
-  const WEEK: { day: string, engDay: string }[] = [];
-  for (let i = 0; i < 7; i++) {
-    const dayName = getVietnameseDayName(date);
-    const engDayName = getDayNameInEnglish(date);
-    WEEK.push({ day: dayName, engDay: engDayName });
-    date = addDays(date, 1);
-  }
-
-  const calendar: ScheduleDay[] = WEEK.map(dayInfo => {
-    const scheduleEntry = schedule.find((item: any) => item.day === dayInfo.engDay);
-    return { day: dayInfo.engDay, slots: scheduleEntry ? scheduleEntry.slots : [] };
-  });
-
-  return calendar;
 };
 
 /**

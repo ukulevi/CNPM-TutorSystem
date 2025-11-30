@@ -7,24 +7,82 @@ interface Profile {
     id: string;
     name: string;
     email: string;
-    // Add other profile properties here
+    role: string;
+    [key: string]: any;
 }
 
 interface Db {
     users: Profile[];
-    // Add other db properties here
+    [key: string]: any;
 }
 
 export class ProfileService {
     private readDb(): Db {
-        console.log('Attempting to read DB from:', dbPath);
-        const dbRaw = fs.readFileSync(dbPath);
-        console.log('Raw DB content length:', dbRaw.length);
-        const db = JSON.parse(dbRaw.toString());
-        console.log('Parsed DB object (first 100 chars):', JSON.stringify(db).substring(0, 100));
-        return db;
+        try {
+            const dbRaw = fs.readFileSync(dbPath, 'utf8');
+            const parsed = JSON.parse(dbRaw);
+
+            // Validate the structure
+            if (!parsed.users || !Array.isArray(parsed.users)) {
+                console.error('Invalid database structure: missing or invalid users array');
+                throw new Error('Invalid database structure');
+            }
+
+            return parsed;
+        } catch (error) {
+            console.error('Error reading database:', error);
+            throw error;
+        }
     }
 
+    private writeDb(db: Db): void {
+        try {
+            // Validate before writing
+            if (!db.users || !Array.isArray(db.users)) {
+                throw new Error('Invalid database structure: users must be an array');
+            }
+
+            // Write to a temporary file first, then rename (atomic operation)
+            const tempPath = dbPath + '.tmp';
+
+            // Ensure no stale temp file exists
+            if (fs.existsSync(tempPath)) {
+                try {
+                    fs.unlinkSync(tempPath);
+                } catch (e) {
+                    console.warn('Could not delete existing temp file:', e);
+                }
+            }
+
+            fs.writeFileSync(tempPath, JSON.stringify(db, null, 2), 'utf8');
+
+            // Atomic rename (will replace the original file)
+            try {
+                fs.renameSync(tempPath, dbPath);
+            } catch (renameError) {
+                // If rename fails, try direct write as fallback
+                console.warn('Rename failed, falling back to direct write:', renameError);
+                fs.unlinkSync(tempPath); // Clean up temp file
+                fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), 'utf8');
+            }
+        } catch (error) {
+            console.error('Error writing database:', error);
+            // Try to clean up temp file if it exists
+            try {
+                const tempPath = dbPath + '.tmp';
+                if (fs.existsSync(tempPath)) {
+                    fs.unlinkSync(tempPath);
+                }
+            } catch (cleanupError) {
+                console.error('Error cleaning up temp file:', cleanupError);
+            }
+            throw error;
+        }
+    }
+
+    /**
+     * Get profile by user ID
+     */
     getProfileById(userId: string): Profile | undefined {
         console.log('Searching for profile with userId:', userId);
         const db = this.readDb();
@@ -32,10 +90,48 @@ export class ProfileService {
         console.log('Found profile:', profile);
         return profile;
     }
-
+    /**
+     * Get all profiles
+     */
     getAllProfiles(): Profile[] {
         const db = this.readDb();
         return db.users;
+    }
+
+    /**
+     * Update user profile with new data
+     */
+    updateProfile(userId: string, updates: Partial<Profile>): Profile | undefined {
+        const db = this.readDb();
+        const profileIndex = db.users.findIndex(p => p.id === userId);
+
+        if (profileIndex === -1) {
+            console.error(`Profile with ID ${userId} not found`);
+            return undefined;
+        }
+
+        // Merge updates with existing profile
+        db.users[profileIndex] = {
+            ...db.users[profileIndex],
+            ...updates,
+            id: userId, // Prevent ID from being changed
+        };
+
+        this.writeDb(db);
+        console.log('Profile updated:', db.users[profileIndex]);
+        return db.users[profileIndex];
+    }
+
+    /**
+     * Search profiles by name or email (for user search feature)
+     */
+    searchProfiles(query: string): Profile[] {
+        const db = this.readDb();
+        const lowerQuery = query.toLowerCase();
+        return db.users.filter(p =>
+            p.name.toLowerCase().includes(lowerQuery) ||
+            p.email.toLowerCase().includes(lowerQuery)
+        );
     }
 }
 

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { UserRole } from '../../types';
 import { Sidebar } from '../../components/shared/Sidebar';
 import { Button } from '../../components/ui/button';
 import { ArrowLeft, CalendarIcon } from 'lucide-react';
 import { Card, CardContent } from '../../components/ui/card';
 import { CalendarDay, CalendarHour, CalendarSlot } from '../../types';
-import { addAvailableSlot, cancelAppointment, createAppointment, deleteAvailableSlot, freeSlot, getScheduleForTutor, ScheduleDay } from './api/calendarApi';
+import { addAvailableSlot, cancelAppointment, createAppointment, deleteAvailableSlot, freeSlot, getScheduleForTutor } from './api/calendarApi';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 import { addDays, format, startOfWeek } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
@@ -39,7 +40,7 @@ const TIME_SLOTS = [
 ];
 
 export function TutorSchedulePage({ userRole, onNavigate, onGoBack }: TutorSchedulePageProps) {
-  const [schedule, setSchedule] = useState<ScheduleDay[]>([]);
+  const [schedule, setSchedule] = useState<CalendarDay[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const [showCancelDialog, setShowCancelDialog] = useState(false);
@@ -56,17 +57,12 @@ export function TutorSchedulePage({ userRole, onNavigate, onGoBack }: TutorSched
   const placeholderStudentId = '1';
 
   const fetchSchedule = async () => {
-
-    // Fetch data from mock API
-    const data: ScheduleDay[] | undefined = await getScheduleForTutor(tutorId, tutorId);
+    setIsLoading(true);
+    const data = await getScheduleForTutor(tutorId, tutorId);
     if (data) {
-      // Fill in missing days with empty slot arrays for rendering consistency
-      const fullSchedule = WEEK_DAYS_MAPPING.map(day => {
-        const existingDay = data.find(d => d.day === day.key);
-        return existingDay || { day: day.key, slots: [] };
-      });
-      setSchedule(fullSchedule);
+      setSchedule(data);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -199,10 +195,9 @@ export function TutorSchedulePage({ userRole, onNavigate, onGoBack }: TutorSched
                               <span className="text-gray-700 text-sm">{hour}</span>
                             </td>
                             {weekDates.map((day) => {
-                              const dayData = schedule.find(d => d.day === day.key) || { day: day.key, slots: [] };
-
-                              const isAvailable = dayData.slots.includes(hour);
-                              const status: 'available' | null = isAvailable ? 'available' : null;
+                              const dayData = schedule.find(d => d.day === day.display);
+                              const hourData = dayData?.hours.find(h => h.hour === hour);
+                              const status = hourData?.slot?.status ?? null;
 
                               const isClickableSlot = status === 'available' || status === null;
 
@@ -210,18 +205,23 @@ export function TutorSchedulePage({ userRole, onNavigate, onGoBack }: TutorSched
                                 <td key={`${day.key}-${hour}`} className="p-0 border-b border-r last:border-r-0">
                                   <button
                                     type='button'
-                                    onClick={() => isClickableSlot ? handleSlotClick(dayData.day, day.date, hour, status) : null}
+                                    onClick={() => isClickableSlot ? handleSlotClick(day.key, day.date, hour, status) : null}
                                     className={`w-full h-full p-2 text-left transition-colors min-h-[60px] flex items-center justify-center ${getSlotClassName(status)}`}
                                   >
                                     {status === 'available' && (
                                       <div className="text-xs text-center text-green-700 font-semibold">
                                       </div>
                                     )}
+                                     {hourData?.slot?.status === 'booked' && (
+                                        <div className="text-xs text-center text-blue-800 font-semibold">
+                                            {hourData.slot.studentName}
+                                        </div>
+                                    )}
                                     {status === null && (
                                       <div className="text-xs text-center text-gray-500 font-semibold">
                                       </div>
                                     )}
-                                    {/* Nếu có trạng thái 'booked', nó sẽ dùng bg-gray-200 và text-gray-600 */}
+                                    {/* If slot is booked, it will use a different style */}
                                   </button>
                                 </td>
                               );

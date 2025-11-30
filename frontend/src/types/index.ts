@@ -4,7 +4,7 @@ export type User = {
   id: string;
   name: string;
   email: string;
-  role: 'student' | 'tutor';
+  role: 'student' | 'tutor' | 'admin';
   avatar?: string;
   department?: string;
   major?: string;

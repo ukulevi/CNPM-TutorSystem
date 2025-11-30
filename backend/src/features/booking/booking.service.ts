@@ -17,17 +17,67 @@ interface Db {
 }
 
 export class BookingService {
-    private readDb(): Db {
-        console.log('BookingService: Attempting to read DB from:', dbPath);
-        const dbRaw = fs.readFileSync(dbPath);
-        console.log('BookingService: Raw DB content length:', dbRaw.length);
-        const db = JSON.parse(dbRaw.toString());
-        console.log('BookingService: Parsed DB object (first 100 chars):', JSON.stringify(db).substring(0, 100));
-        return db;
+    private readDb(): Db { // (nhi) readDb có handle lỗi
+        try {
+            const dbRaw = fs.readFileSync(dbPath, 'utf8');
+            const parsed = JSON.parse(dbRaw);
+
+            // Validate the structure
+            if (!parsed.appointments || !Array.isArray(parsed.appointments)) {
+                console.error('Invalid database structure: missing or invalid appointments array');
+                throw new Error('Invalid database structure');
+            }
+
+            return parsed;
+        } catch (error) {
+            console.error('Error reading database:', error);
+            throw error;
+        }
     }
 
-    private writeDb(db: Db): void {
-        fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
+    private writeDb(db: Db): void { //(nhi) writeDb có handle lỗi
+        try {
+            // Validate before writing
+            if (!db.appointments || !Array.isArray(db.appointments)) {
+                throw new Error('Invalid database structure: appointments must be an array');
+            }
+
+            // Write to a temporary file first, then rename (atomic operation)
+            const tempPath = dbPath + '.tmp';
+
+            // Ensure no stale temp file exists
+            if (fs.existsSync(tempPath)) {
+                try {
+                    fs.unlinkSync(tempPath);
+                } catch (e) {
+                    console.warn('Could not delete existing temp file:', e);
+                }
+            }
+
+            fs.writeFileSync(tempPath, JSON.stringify(db, null, 2), 'utf8');
+
+            // Atomic rename (will replace the original file)
+            try {
+                fs.renameSync(tempPath, dbPath);
+            } catch (renameError) {
+                // If rename fails, try direct write as fallback
+                console.warn('Rename failed, falling back to direct write:', renameError);
+                fs.unlinkSync(tempPath); // Clean up temp file
+                fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), 'utf8');
+            }
+        } catch (error) {
+            console.error('Error writing database:', error);
+            // Try to clean up temp file if it exists
+            try {
+                const tempPath = dbPath + '.tmp';
+                if (fs.existsSync(tempPath)) {
+                    fs.unlinkSync(tempPath);
+                }
+            } catch (cleanupError) {
+                console.error('Error cleaning up temp file:', cleanupError);
+            }
+            throw error;
+        }
     }
 
     getAllAppointments(): Appointment[] {

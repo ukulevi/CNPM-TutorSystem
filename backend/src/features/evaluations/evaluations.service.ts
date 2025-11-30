@@ -17,12 +17,20 @@ interface Db {
     // Add other db properties here
 }
 
-export class EvaluationsService {
+export class EvaluationsService { //(nhi) handle đọc ghi evaluations
     private readDb(): Db {
-        const dbRaw = fs.readFileSync(dbPath);
-        const db = JSON.parse(dbRaw.toString());
-        db.evaluations = db.evaluations || []; // Ensure evaluations array exists
-        return db;
+        try {
+            const dbRaw = fs.readFileSync(dbPath, 'utf8');
+            const parsed = JSON.parse(dbRaw);
+
+            // Ensure evaluations array exists
+            parsed.evaluations = parsed.evaluations || [];
+
+            return parsed;
+        } catch (error) {
+            console.error('Error reading database:', error);
+            throw error;
+        }
     }
 
     getEvaluationsByTutor(tutorId: string): Evaluation[] {

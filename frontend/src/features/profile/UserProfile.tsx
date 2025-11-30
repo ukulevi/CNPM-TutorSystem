@@ -1,3 +1,4 @@
+// Profile viewing and editing page for both students and tutors
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Mail, MapPin, Star, Edit, Calendar, FileText, Pin, Lock } from 'lucide-react';
 import { Button } from '../../components/ui/button';
@@ -14,13 +15,12 @@ import {
 } from '../../components/ui/dialog';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '../../components/ui/radio-group';
+
 import { Sidebar } from '../../components/shared/Sidebar';
 import { getUserProfile, updateUserProfile } from './api/profileApi';
 import { getScheduleForTutor, getScheduleForStudent } from '../schedule/api/calendarApi';
 import { getDocuments } from '../documents/api/documentApi';
 import { Tutor, CalendarDay, Document as Doc } from '../../types'; // Đã sửa ở các bước trước
-
 // Define the UserProfileData type here or import from a central types file
 // if it's used elsewhere. Renamed from UserProfile to UserProfileData to avoid conflict
 type UserProfileData = {
@@ -30,7 +30,7 @@ type UserProfileData = {
   avatar?: string;
   department?: string;
   officeLocation?: string;
-  role: 'student' | 'tutor' | 'admin';
+  role: 'student' | 'tutor';
   rating?: number;
   specialization?: string;
   publications?: { title: string; link: string; public: boolean }[];
@@ -41,22 +41,21 @@ type UserProfileData = {
   scheduleVisibility?: 'public' | 'private';
   documentsVisibility?: 'public' | 'private';
 };
-
 type UserProfileProps = {
   profileId: string; // ID của người dùng cần xem hồ sơ
   currentUserId: string; // ID của người dùng đang đăng nhập
-  userRole: 'student' | 'tutor' | 'admin';
+  userRole: 'student' | 'tutor';
   onNavigate: (page: string) => void;
   onSelectTutor: (tutor: Tutor) => void;
   onGoBack: () => void;
 };
-
 export function UserProfile({ profileId, currentUserId, userRole, onNavigate, onSelectTutor, onGoBack }: UserProfileProps) {
   const [profile, setProfile] = useState<UserProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [schedule, setSchedule] = useState<CalendarDay[]>([]);
   const [documents, setDocuments] = useState<Doc[]>([]);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   // State để lưu dữ liệu trong form chỉnh sửa
   const [editData, setEditData] = useState({
     academicInterests: '',
@@ -65,40 +64,59 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
     documentsVisibility: 'private' as 'public' | 'private',
   });
 
+  // Fetch profile data on component mount
   useEffect(() => {
     const fetchProfile = async () => {
       setIsLoading(true);
-      const profileData = await getUserProfile(profileId);
-      setProfile(profileData);
+      
+      setError(null);
+      try {
+        // Get user profile from backend
+        const profileData = await getUserProfile(profileId);
 
-      if (profileData) {
-        // Fetch schedule and documents in parallel
-        const schedulePromise = profileData.role === 'tutor'
-          ? getScheduleForTutor(profileId, currentUserId, userRole) // Truyền thông tin người xem
-          : getScheduleForStudent(profileId); // Sửa lại: chỉ cần truyền studentId
-        
-        const documentsPromise = getDocuments(profileId);
+        if (!profileData) {
+          setError('Profile not found. Please try again.');
+          setIsLoading(false);
+          return;
+        }
 
-        const [scheduleData, documentsData] = await Promise.all([schedulePromise, documentsPromise]);
-        setSchedule(scheduleData);
-        setDocuments(documentsData);
+        setProfile(profileData);
+
+      
+        try {
+          const schedulePromise = profileData.role === 'tutor'
+            ? getScheduleForTutor(profileId, currentUserId)
+            : getScheduleForStudent(profileId);
+
+     
+          const documentsPromise = getDocuments(profileId);
+
+          const [scheduleData, documentsData] = await Promise.all([schedulePromise, documentsPromise]);
+          setSchedule(scheduleData || []);
+          setDocuments(documentsData || []);
+        } catch (scheduleErr) {
+          console.error('Failed to fetch schedule/documents:', scheduleErr);
+          // Don't fail the whole page if schedule/documents fail, just show profile
+          setSchedule([]);
+          setDocuments([]);
+        }
+      } catch (err) {
+        console.error('Failed to fetch profile:', err);
+        setError('Failed to load profile. Please make sure the backend is running and try again.');
+        setProfile(null);
+      } finally {
+        setIsLoading(false);
       }
-
-      setIsLoading(false);
     };
     fetchProfile();
   }, [profileId, currentUserId, userRole]);
-
   const getInitials = (name: string) => {
     const parts = name.split(' ');
     return parts[parts.length - 2]?.charAt(0) + parts[parts.length - 1]?.charAt(0);
   };
-
   const isOwnProfile = profileId === currentUserId;
   const canViewSchedule = isOwnProfile || profile?.scheduleVisibility === 'public';
   const canViewDocuments = isOwnProfile || profile?.documentsVisibility === 'public';
-
-
   const handleBookAppointment = () => {
     if (profile && profile.role === 'tutor') {
       const tutorData: Tutor = {
@@ -112,7 +130,6 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
       onSelectTutor(tutorData);
     }
   };
-
   const handleOpenEditDialog = () => {
     if (!profile) return;
     // Khởi tạo form với dữ liệu hiện tại, chuyển từ mảng object thành chuỗi
@@ -124,13 +141,24 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
     });
     setShowEditDialog(true);
   };
-
   const handleSaveChanges = async () => {
     if (!profile) return;
 
-    // Chuyển chuỗi từ form thành mảng object để lưu
-    const updatedInterests = editData.academicInterests.split(',').map(s => s.trim()).filter(Boolean).map(interest => ({ interest, public: true }));
-    const updatedCourses = editData.coursesOfInterest.split(',').map(s => s.trim()).filter(Boolean).map(course => ({ course, public: true }));
+    
+    // Convert comma-separated strings from form to array of objects
+    // Split by comma, trim whitespace, filter empty strings, then map to objects
+    const updatedInterests = editData.academicInterests
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean) // Remove empty entries
+      .map(interest => ({ interest, public: true }));
+
+    // Same conversion for courses of interest
+    const updatedCourses = editData.coursesOfInterest
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean) // Remove empty entries
+      .map(course => ({ course, public: true }));
 
     const updatedProfile = await updateUserProfile(profile.id, {
       academicInterests: updatedInterests,
@@ -140,29 +168,52 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
     });
 
     if (updatedProfile) {
-      setProfile(updatedProfile); // Cập nhật lại giao diện với thông tin mới
+      
+      // Update UI with new profile data
+      setProfile(updatedProfile);
     }
 
     setShowEditDialog(false);
   };
-
   const handleEditFormChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setEditData(prev => ({ ...prev, [name]: value }));
   };
-
   const handleVisibilityChange = (name: 'scheduleVisibility' | 'documentsVisibility', value: 'public' | 'private') => {
     setEditData(prev => ({ ...prev, [name]: value }));
   };
 
   if (isLoading) {
-    return <div className="flex h-screen items-center justify-center">Đang tải hồ sơ...</div>;
+   
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#003366] mx-auto mb-4"></div>
+          <p className="text-gray-600">Đang tải hồ sơ...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded mb-4">
+            <p className="font-semibold mb-2">⚠️ Lỗi</p>
+            <p>{error}</p>
+          </div>
+          <Button onClick={onGoBack} className="bg-[#003366] hover:bg-[#004488]">
+            Quay lại
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   if (!profile) {
     return <div className="flex h-screen items-center justify-center">Không tìm thấy hồ sơ người dùng.</div>;
   }
-
   return (
     <div className="flex">
       <Sidebar
@@ -172,7 +223,6 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
         onNavigate={onNavigate}
         onLogout={() => onNavigate('login')}
       />
-
       <div className="flex-1 bg-gray-50">
         {/* Header */}
         <div className="bg-white border-b border-gray-200 px-8 py-6">
@@ -186,7 +236,6 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
           </Button>
           <h1 className="text-[#003366]">Hồ sơ cá nhân</h1>
         </div>
-
         {/* Main Content */}
         <div className="p-8 max-w-4xl mx-auto">
           <Card>
@@ -209,16 +258,17 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
                   )}
                   {/* Logic hiển thị nút hành động được cải tiến */}
                   {isOwnProfile ? (
-                     <Button onClick={handleOpenEditDialog} className="mt-4 w-full bg-orange-500 hover:bg-orange-600">
-                        <Edit className="w-4 h-4 mr-2" /> Chỉnh sửa hồ sơ
+                   
+                    <Button onClick={handleOpenEditDialog} className="mt-4 w-full bg-orange-500 hover:bg-orange-600">
+                      <Edit className="w-4 h-4 mr-2" /> Chỉnh sửa hồ sơ
                     </Button>
                   ) : userRole === 'student' && profile.role === 'tutor' ? (
                     <Button onClick={handleBookAppointment} className="mt-4 w-full bg-[#003366] hover:bg-[#004488]">
-                        Đặt lịch hẹn
+                      
+                      Đặt lịch hẹn
                     </Button>
                   ) : null}
                 </div>
-
                 {/* Detailed Info */}
                 <div className="w-full md:w-2/3 space-y-6">
                   {/* Contact Info */}
@@ -231,7 +281,6 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
                       )}
                     </div>
                   </div>
-
                   {/* Tutor Specific Info */}
                   {profile.role === 'tutor' && (
                     <>
@@ -242,7 +291,8 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
                       <div>
                         <h3 className="text-lg text-[#003366] mb-2 border-b pb-2">Công trình nghiên cứu</h3>
                         <ul className="list-disc list-inside space-y-1 text-sm">
-                      {profile.publications?.filter((p: { public: any; }) => p.public).map((pub: { link: string; title: string; }, i: number) => (
+                      
+                          {profile.publications?.filter((p: { public: any; }) => p.public).map((pub: { link: string; title: string; }, i: number) => (
                             <li key={i}><a href={pub.link} className="text-blue-600 hover:underline">{pub.title}</a></li>
                           ))}
                         </ul>
@@ -251,31 +301,34 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
                   )}
                   {/* Student Specific Info */}
                   {profile.role === 'student' && (
-                     <>
-                        <div>
-                            <h3 className="text-lg text-[#003366] mb-2 border-b pb-2">Thông tin học tập</h3>
-                            <div className="text-sm">
-                                <p><strong>Chuyên ngành:</strong> {profile.major}</p>
-                                <p><strong>Khóa:</strong> {profile.cohort}</p>
-                            </div>
+                     
+                    <>
+                      <div>
+                        <h3 className="text-lg text-[#003366] mb-2 border-b pb-2">Thông tin học tập</h3>
+                        <div className="text-sm">
+                          <p><strong>Chuyên ngành:</strong> {profile.major}</p>
+                          <p><strong>Khóa:</strong> {profile.cohort}</p>
                         </div>
-                        <div>
-                            <h3 className="text-lg text-[#003366] mb-2 border-b pb-2">Lĩnh vực quan tâm</h3>
-                            <div className="flex flex-wrap gap-2">
-                            {profile.academicInterests?.filter((i: { public: any; }) => i.public).map((interest: { interest: string; }, idx: number) => (
-                                    <Badge key={idx} variant="secondary">{interest.interest}</Badge>
-                                ))}
-                            </div>
+                      
+                      </div>
+                      <div>
+                        <h3 className="text-lg text-[#003366] mb-2 border-b pb-2">Lĩnh vực quan tâm</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {profile.academicInterests?.filter((i: { public: any; }) => i.public).map((interest: { interest: string; }, idx: number) => (
+                            <Badge key={idx} variant="secondary">{interest.interest}</Badge>
+                          ))}
                         </div>
-                        <div>
-                            <h3 className="text-lg text-[#003366] mb-2 border-b pb-2">Khóa học quan tâm</h3>
-                            <div className="flex flex-wrap gap-2">
-                            {profile.coursesOfInterest?.filter((c: { public: any; }) => c.public).map((course: { course: string; }, idx: number) => (
-                                    <Badge key={idx} variant="secondary">{course.course}</Badge>
-                                ))}
-                            </div>
-                        </div>
-                     </>
+                      
+                      </div>
+                      <div>
+                        <h3 className="text-lg text-[#003366] mb-2 border-b pb-2">Khóa học quan tâm</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {profile.coursesOfInterest?.filter((c: { public: any; }) => c.public).map((course: { course: string; }, idx: number) => (
+                            <Badge key={idx} variant="secondary">{course.course}</Badge>
+                          ))}
+                        </div>                     
+                      </div>
+                    </>
                   )}
 
                   {/* Schedule Section */}
@@ -308,7 +361,6 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
                       </div>
                     )}
                   </div>
-
                   {/* Documents Section */}
                   <div>
                     <h3 className="text-lg text-[#003366] mb-2 border-b pb-2 flex items-center gap-2">
@@ -345,7 +397,6 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
           </Card>
         </div>
       </div>
-
       {/* Edit Profile Dialog */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent>
@@ -384,40 +435,96 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
                 </div>
               </>
             )}
-            {/* Thêm các trường cho Tutor ở đây nếu cần */}
+          
+            {/* Schedule visibility options - displayed as clickable items */}
             <div className="space-y-2">
               <Label>Hiển thị thời khóa biểu</Label>
-              <RadioGroup
-                value={editData.scheduleVisibility}
-                onValueChange={(value: 'public' | 'private') => handleVisibilityChange('scheduleVisibility', value)}
-                className="mt-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="public" id="edit-schedule-public" />
-                  <Label htmlFor="edit-schedule-public">Công khai</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="private" id="edit-schedule-private" />
-                  <Label htmlFor="edit-schedule-private">Riêng tư</Label>
-                </div>
-              </RadioGroup>
+            
+              <div className="space-y-2 mt-2">
+                {/* Public option for schedule visibility */}
+                <button
+                  onClick={() => handleVisibilityChange('scheduleVisibility', 'public')}
+                  className={`w-full flex items-center gap-2 p-3 rounded-lg border-2 transition-all ${editData.scheduleVisibility === 'public'
+                      ? 'border-[#003366] bg-[#E0F7FF]'
+                      : 'border-gray-200 bg-gray-50 hover:border-gray-300'
+                    }`}
+                >
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${editData.scheduleVisibility === 'public'
+                      ? 'border-[#003366] bg-[#003366]'
+                      : 'border-gray-300 bg-white'
+                    }`}>
+                    {editData.scheduleVisibility === 'public' && <div className="w-2 h-2 bg-white rounded-full" />}
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium text-[#003366]">Công khai</p>
+                    <p className="text-xs text-gray-600 whitespace-nowrap">Mọi người có thể xem</p>
+                  </div>
+                </button>
+                {/* Private option for schedule visibility */}
+                <button
+                  onClick={() => handleVisibilityChange('scheduleVisibility', 'private')}
+                  className={`w-full flex items-center gap-2 p-3 rounded-lg border-2 transition-all ${editData.scheduleVisibility === 'private'
+                      ? 'border-[#003366] bg-[#E0F7FF]'
+                      : 'border-gray-200 bg-gray-50 hover:border-gray-300'
+                    }`}
+                >
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${editData.scheduleVisibility === 'private'
+                      ? 'border-[#003366] bg-[#003366]'
+                      : 'border-gray-300 bg-white'
+                    }`}>
+                    {editData.scheduleVisibility === 'private' && <div className="w-2 h-2 bg-white rounded-full" />}
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium text-[#003366]">Riêng tư</p>
+                    <p className="text-xs text-gray-600 whitespace-nowrap">Chỉ bạn có thể xem</p>
+                  </div>
+                </button>
+              </div>
             </div>
+            {/* Documents visibility options - displayed as clickable items */}
             <div className="space-y-2">
               <Label>Hiển thị tài liệu</Label>
-              <RadioGroup
-                value={editData.documentsVisibility}
-                onValueChange={(value: 'public' | 'private') => handleVisibilityChange('documentsVisibility', value)}
-                className="mt-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="public" id="edit-documents-public" />
-                  <Label htmlFor="edit-documents-public">Công khai</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="private" id="edit-documents-private" />
-                  <Label htmlFor="edit-documents-private">Riêng tư</Label>
-                </div>
-              </RadioGroup>
+           
+              <div className="space-y-2 mt-2">
+                {/* Public option for documents visibility */}
+                <button
+                  onClick={() => handleVisibilityChange('documentsVisibility', 'public')}
+                  className={`w-full flex items-center gap-2 p-3 rounded-lg border-2 transition-all ${editData.documentsVisibility === 'public'
+                      ? 'border-[#003366] bg-[#E0F7FF]'
+                      : 'border-gray-200 bg-gray-50 hover:border-gray-300'
+                    }`}
+                >
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${editData.documentsVisibility === 'public'
+                      ? 'border-[#003366] bg-[#003366]'
+                      : 'border-gray-300 bg-white'
+                    }`}>
+                    {editData.documentsVisibility === 'public' && <div className="w-2 h-2 bg-white rounded-full" />}
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium text-[#003366]">Công khai</p>
+                    <p className="text-xs text-gray-600 whitespace-nowrap">Mọi người có thể xem</p>
+                  </div>
+                </button>
+                {/* Private option for documents visibility */}
+                <button
+                  onClick={() => handleVisibilityChange('documentsVisibility', 'private')}
+                  className={`w-full flex items-center gap-2 p-3 rounded-lg border-2 transition-all ${editData.documentsVisibility === 'private'
+                      ? 'border-[#003366] bg-[#E0F7FF]'
+                      : 'border-gray-200 bg-gray-50 hover:border-gray-300'
+                    }`}
+                >
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${editData.documentsVisibility === 'private'
+                      ? 'border-[#003366] bg-[#003366]'
+                      : 'border-gray-300 bg-white'
+                    }`}>
+                    {editData.documentsVisibility === 'private' && <div className="w-2 h-2 bg-white rounded-full" />}
+                  </div>
+                  <div className="text-left">
+                    <p className="font-medium text-[#003366]">Riêng tư</p>
+                    <p className="text-xs text-gray-600 whitespace-nowrap">Chỉ bạn có thể xem</p>
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
           <DialogFooter>

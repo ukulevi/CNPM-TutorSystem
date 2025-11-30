@@ -1,0 +1,28 @@
+{
+  "users": [
+    {
+      "id": "tutor-1",
+      "name": "Tutor One",
+      "email": "tutor1@example.com",
+      "role": "TUTOR",
+      "avatar": "",
+      "departmentId": "dept-1"
+    },
+    {
+      "id": "admin-1",
+      "name": "Admin One",
+      "email": "admin1@example.com",
+      "role": "ADMIN",
+      "avatar": ""
+    },
+    {
+      "id": "student-1",
+      "name": "Student One",
+      "email": "student1@example.com",
+      "role": "STUDENT",
+      "avatar": "",
+      "departmentId": "dept-1"
+    }
+  ],
+  "systemSettings": []
+}

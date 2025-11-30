@@ -1,24 +1,61 @@
 import { useState, useEffect } from 'react';
 import { Button } from '../../components/ui/button';
 import { getAllProfiles } from '../../features/profile/api/profileApi';
-
+import { useAuth } from '../../context/AuthContext';
+import { User } from '../../types/index';
 type LoginPageProps = {
   onLogin: (user: User) => void;
 };
 
 export function LoginPage({ onLogin }: LoginPageProps) {
-  const [defaultStudent, setDefaultStudent] = useState<User | null>(null);
-  const [defaultTutor, setDefaultTutor] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const auth = useAuth();
 
-  useEffect(() => {
-    getAllProfiles()
-      .then(data => {
-        const student = data.find((p: User) => p.role === 'student');
-        const tutor = data.find((p: User) => p.role === 'tutor');
-        setDefaultStudent(student);
-        setDefaultTutor(tutor);
-      });
-  }, []);
+
+  const handleLoginAsStudent = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const user = await auth.loginAsStudent();
+      if (user) onLogin(user);
+      else setError('Failed to login as student');
+    } catch (e) {
+      console.error('Login error:', e);
+      setError('Login failed. Check console for details.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLoginAsTutor = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const user = await auth.loginAsTutor();
+      if (user) onLogin(user);
+      else setError('Failed to login as tutor');
+    } catch (e) {
+      console.error('Login error:', e);
+      setError('Login failed. Check console for details.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLoginAsAdmin = async () => {
+    setIsLoading(true);
+    try {
+      const user = await auth.loginAsAdmin();
+      if (user) onLogin(user);
+      else setError('Failed to login as admin');
+    } catch (e) {
+      console.error('Admin login error', e);
+      setError('Login failed');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#003366] to-[#0099CC]">
@@ -36,27 +73,48 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           <p className="text-gray-600">Trường Đại học Bách Khoa TP.HCM</p>
         </div>
 
-        {/* SSO Login Button */}
+        {/* Error message */}
+        {error && (
+          <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-sm">
+            {error}
+          </div>
+        )}
+
+        {/* Login as Student Button - SSO */}
         <Button
-          onClick={() => defaultStudent && onLogin(defaultStudent)}
+          onClick={handleLoginAsStudent}
+          disabled={isLoading}
           className="w-full bg-[#003366] hover:bg-[#004488] text-white h-14 text-lg mb-4"
         >
           <div className="flex items-center gap-3">
             <div className="w-6 h-6 bg-white/20 rounded flex items-center justify-center text-sm">
               BK
             </div>
-            <span>Đăng nhập qua HCMUT-SSO</span>
+            <span>{isLoading ? 'Đang tải...' : 'Đăng nhập qua HCMUT-SSO'}</span>  
           </div>
         </Button>
 
-        {/* Demo: Tutor Login */}
+        {/* Login as Tutor Button */}
         <Button
-          onClick={() => defaultTutor && onLogin(defaultTutor)}
+          onClick={handleLoginAsTutor}
+          disabled={isLoading}
           variant="outline"
           className="w-full h-12 border-[#003366] text-[#003366] hover:bg-[#003366]/5"
         >
-          Demo: Đăng nhập với vai trò Tutor
+          {isLoading ? 'Đang tải...' : 'Đăng nhập với tài khoản Tutor'}
         </Button>
+
+        {/* Login as Admin Button */}
+        <div className="mt-4">
+          <Button
+            onClick={handleLoginAsAdmin}
+            disabled={isLoading}
+            variant="ghost"
+            className="w-full text-sm text-gray-700"
+          >
+            {isLoading ? 'Đang tải...' : 'Admin'}
+          </Button>
+        </div>
 
         <p className="text-center text-gray-500 text-sm mt-6">
           Sử dụng tài khoản HCMUT của bạn để đăng nhập

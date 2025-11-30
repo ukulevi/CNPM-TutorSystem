@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { UserProfileData } from '../../../types/adminTypes';
 
-const API_URL = 'http://localhost:3001'; // URL của json-server
+const API_URL = 'http://localhost:3001/api/admin';
 
 /**
  * Lấy danh sách tất cả người dùng trong hệ thống.
@@ -15,7 +15,7 @@ export const getAllUsers = async (): Promise<UserProfileData[]> => {
 /**
  * Cập nhật vai trò cho một người dùng cụ thể.
  * @param userId - ID của người dùng cần cập nhật.
- * @param newRole - Vai trò mới ('student', 'tutor', 'admin', 'academic_dept').
+ * @param newRole - Vai trò mới ('student', 'tutor', 'admin').
  * @returns Promise chứa thông tin người dùng đã được cập nhật.
  */
 export const updateUserRole = async (
