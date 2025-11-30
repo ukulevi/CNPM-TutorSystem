@@ -9,7 +9,7 @@ interface Profile {
 }
 
 interface Db {
-    profiles: Profile[];
+    users: Profile[];
     // Add other db properties here
 }
 
@@ -26,13 +26,14 @@ export class ProfileService {
     getProfileById(userId: string): Profile | undefined {
         console.log('Searching for profile with userId:', userId);
         const db = this.readDb();
-        const profile = db.profiles.find(profile => profile.id === userId);
+        const profile = db.users.find(profile => profile.id === userId);
         console.log('Found profile:', profile);
         return profile;
     }
 
     getAllProfiles(): Profile[] {
         const db = this.readDb();
-        return db.profiles;
+        return db.users;
     }
 }
+

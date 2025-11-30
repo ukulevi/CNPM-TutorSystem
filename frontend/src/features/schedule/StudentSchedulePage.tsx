@@ -8,7 +8,7 @@ import { CalendarDay, CalendarHour, CalendarSlot } from '../../types';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 
 type StudentSchedulePageProps = {
-  userRole: 'student'; // Chỉ dành cho Student
+  userRole: 'student' | 'tutor' | 'admin';
   onNavigate: (page: string) => void;
   onGoBack: () => void;
 };
