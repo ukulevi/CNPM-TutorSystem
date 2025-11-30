@@ -34,13 +34,20 @@ interface Db {
 
 export class SearchService {
     private readDb(): Db {
-        const dbRaw = fs.readFileSync(dbPath);
-        const db = JSON.parse(dbRaw.toString());
-        // Provide default empty arrays if properties are missing
-        db.appointments = db.appointments || [];
-        db.departments = db.departments || [];
-        db.profiles = db.profiles || [];
-        return db;
+        try {
+            const dbRaw = fs.readFileSync(dbPath, 'utf8');
+            const parsed = JSON.parse(dbRaw);
+
+            // Provide default empty arrays if properties are missing
+            parsed.appointments = parsed.appointments || [];
+            parsed.departments = parsed.departments || [];
+            parsed.profiles = parsed.profiles || [];
+
+            return parsed;
+        } catch (error) {
+            console.error('Error reading database:', error);
+            throw error;
+        }
     }
 
     searchTutors(query: string): Tutor[] {
@@ -49,7 +56,7 @@ export class SearchService {
         return db.profiles.filter(profile =>
             profile.role === 'tutor' &&
             (profile.name.toLowerCase().includes(lowerCaseQuery) ||
-             profile.specialization.toLowerCase().includes(lowerCaseQuery))
+                profile.specialization.toLowerCase().includes(lowerCaseQuery))
         );
     }
 
