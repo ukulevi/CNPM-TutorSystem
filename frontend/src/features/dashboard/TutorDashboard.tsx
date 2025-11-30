@@ -83,20 +83,6 @@ export function TutorDashboard({ onNavigate, onLogout }: TutorDashboardProps) {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-600 text-sm mb-1">Sắp tới</p>
-                    <h2 className="text-[#003366]">{stats.upcomingSessions}</h2>
-                  </div>
-                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-orange-600" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
                     <p className="text-gray-600 text-sm mb-1">Sinh viên</p>
                     <h2 className="text-[#003366]">{stats.totalStudents}</h2>
                   </div>

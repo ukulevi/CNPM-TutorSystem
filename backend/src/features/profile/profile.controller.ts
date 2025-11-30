@@ -5,9 +5,10 @@ const profileService = new ProfileService();
 
 export const getProfile = (req: Request, res: Response) => {
     const { id } = req.params;
-            const profile = profileService.getProfileById(id);
-            console.log('Profile returned by service:', profile);
-            if (profile) {        res.json(profile);
+    const profile = profileService.getProfileById(id);
+    console.log('Profile returned by service:', profile);
+    if (profile) {
+        res.json(profile);
     } else {
         res.status(404).json({ message: 'Profile not found' });
     }
