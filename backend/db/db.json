@@ -1,7 +1,7 @@
 {
   "profiles": [
     {
-      "id": "tutor-1",
+      "id": "1",
       "name": "PGS.TS Nguyễn Thành Công",
       "email": "cong.nguyen@example.com",
       "department": "Khoa học và Kỹ thuật Máy tính",
@@ -10,12 +10,20 @@
       "rating": 4.8,
       "specialization": "Kỹ thuật phần mềm, Kiến trúc hệ thống, Cơ sở dữ liệu",
       "publications": [
-        { "title": "Phân tích và thiết kế hệ thống hướng đối tượng", "link": "#", "public": true },
-        { "title": "Kiến trúc phần mềm cho hệ thống lớn", "link": "#", "public": true }
+        {
+          "title": "Phân tích và thiết kế hệ thống hướng đối tượng",
+          "link": "#",
+          "public": true
+        },
+        {
+          "title": "Kiến trúc phần mềm cho hệ thống lớn",
+          "link": "#",
+          "public": true
+        }
       ],
       "scheduleVisibility": "public",
       "documentsVisibility": "public",
-      "avatar": "https://i.pravatar.cc/150?u=tutor-1"
+      "avatar": "https://i.pravatar.cc/150?u=1"
     },
     {
       "id": "tutor-2",
@@ -27,8 +35,16 @@
       "rating": 4.9,
       "specialization": "Trí tuệ nhân tạo, Học máy, Xử lý ngôn ngữ tự nhiên",
       "publications": [
-        { "title": "Ứng dụng học sâu trong xử lý ngôn ngữ tự nhiên", "link": "#", "public": true },
-        { "title": "Các thuật toán học máy nâng cao", "link": "#", "public": true }
+        {
+          "title": "Ứng dụng học sâu trong xử lý ngôn ngữ tự nhiên",
+          "link": "#",
+          "public": true
+        },
+        {
+          "title": "Các thuật toán học máy nâng cao",
+          "link": "#",
+          "public": true
+        }
       ],
       "scheduleVisibility": "public",
       "documentsVisibility": "public",
@@ -57,7 +73,13 @@
       "role": "tutor",
       "rating": 4.6,
       "specialization": "Cơ học ứng dụng, Cơ học chất lỏng",
-      "publications": [{ "title": "Động lực học kết cấu", "link": "#", "public": true }],
+      "publications": [
+        {
+          "title": "Động lực học kết cấu",
+          "link": "#",
+          "public": true
+        }
+      ],
       "scheduleVisibility": "public",
       "documentsVisibility": "public",
       "avatar": "https://i.pravatar.cc/150?u=tutor-4"
@@ -109,10 +131,14 @@
       "email": "lananh.nguyen@example.com",
       "department": "Khoa học Ứng dụng",
       "role": "tutor",
-      "rating": 5.0,
+      "rating": 5,
       "specialization": "Vật lý ứng dụng, Quang học",
       "publications": [
-        { "title": "Laser và ứng dụng", "link": "#", "public": true }
+        {
+          "title": "Laser và ứng dụng",
+          "link": "#",
+          "public": true
+        }
       ],
       "scheduleVisibility": "public",
       "documentsVisibility": "public",
@@ -180,87 +206,582 @@
     }
   ],
   "departments": [
-    { "id": "cse", "name": "Khoa học và Kỹ thuật Máy tính" },
-    { "id": "che", "name": "Kỹ thuật Hóa học" },
-    { "id": "me", "name": "Kỹ thuật Cơ khí" },
-    { "id": "eee", "name": "Điện - Điện tử" },
-    { "id": "ce", "name": "Kỹ thuật Xây dựng" },
-    { "id": "as", "name": "Khoa học Ứng dụng" }
+    {
+      "id": "cse",
+      "name": "Khoa học và Kỹ thuật Máy tính"
+    },
+    {
+      "id": "che",
+      "name": "Kỹ thuật Hóa học"
+    },
+    {
+      "id": "me",
+      "name": "Kỹ thuật Cơ khí"
+    },
+    {
+      "id": "eee",
+      "name": "Điện - Điện tử"
+    },
+    {
+      "id": "ce",
+      "name": "Kỹ thuật Xây dựng"
+    },
+    {
+      "id": "as",
+      "name": "Khoa học Ứng dụng"
+    }
   ],
   "appointments": [
-    { "id": "apt-1", "tutorId": "tutor-1", "tutorName": "PGS.TS Nguyễn Thành Công", "studentId": "student-1", "studentName": "Nguyễn Văn An", "subject": "Review Đồ án KTPM", "date": "2025-10-25", "time": "14:00", "status": "completed", "type": "online", "evaluationId": "eval-1" },
-    { "id": "apt-2", "tutorId": "tutor-2", "tutorName": "TS. Trần Thị Bích", "studentId": "student-1", "studentName": "Nguyễn Văn An", "subject": "Thảo luận về mô hình AI", "date": "2025-11-28", "time": "10:00", "status": "booked", "type": "offline" },
-    { "id": "apt-3", "tutorId": "tutor-1", "tutorName": "PGS.TS Nguyễn Thành Công", "studentId": "student-2", "studentName": "Trần Thị Châu", "subject": "Hướng dẫn cấu trúc project", "date": "2025-11-29", "time": "09:00", "status": "booked", "type": "online" },
-    { "id": "apt-4", "tutorId": "tutor-3", "tutorName": "ThS. Lê Văn Dũng", "studentId": "student-3", "studentName": "Lê Thị Xuân", "subject": "Hỏi về quy trình thí nghiệm", "date": "2025-12-05", "time": "15:30", "status": "booked", "type": "offline" },
-    { "id": "apt-5", "tutorId": "tutor-4", "tutorName": "GS.TS Hoàng An", "studentId": "student-1", "studentName": "Nguyễn Văn An", "subject": "Giải đáp bài tập lớn", "date": "2025-11-20", "time": "11:00", "status": "cancelled", "type": "online" },
-    { "id": "apt-6", "tutorId": "tutor-2", "tutorName": "TS. Trần Thị Bích", "studentId": "student-2", "studentName": "Trần Thị Châu", "subject": "Định hướng nghiên cứu", "date": "2025-10-15", "time": "10:00", "status": "completed", "type": "offline", "evaluationId": "eval-2" },
-    { "id": "apt-7", "tutorId": "tutor-2", "tutorName": "TS. Trần Thị Bích", "studentId": "student-1", "studentName": "Nguyễn Văn An", "subject": "Hỏi về thuật toán KNN", "date": "2025-10-18", "time": "13:00", "status": "completed", "type": "offline", "evaluationId": "eval-3" },
-    { "id": "apt-8", "tutorId": "tutor-2", "tutorName": "TS. Trần Thị Bích", "studentId": "student-3", "studentName": "Lê Thị Xuân", "subject": "Tư vấn chọn đề tài", "date": "2025-10-22", "time": "13:00", "status": "completed", "type": "offline", "evaluationId": "eval-4" },
-    { "id": "apt-9", "tutorId": "tutor-2", "tutorName": "TS. Trần Thị Bích", "studentId": "student-1", "studentName": "Nguyễn Văn An", "subject": "Kiểm tra tiến độ NCKH", "date": "2025-12-10", "time": "10:00", "status": "booked", "type": "offline" },
-    { "id": "apt-10", "tutorId": "tutor-2", "tutorName": "TS. Trần Thị Bích", "studentId": "student-2", "studentName": "Trần Thị Châu", "subject": "Giải đáp thắc mắc về bài báo", "date": "2025-12-12", "time": "14:00", "status": "booked", "type": "online" },
-    { "id": "apt-11", "tutorId": "tutor-6", "tutorName": "ThS. Vũ Hoàng", "studentId": "student-5", "studentName": "Hoàng Thị Thu", "subject": "Review mạch điện tử", "date": "2025-11-15", "time": "09:30", "status": "completed", "type": "offline" },
-    { "id": "apt-12", "tutorId": "tutor-3", "tutorName": "ThS. Lê Văn Dũng", "studentId": "student-3", "studentName": "Lê Thị Xuân", "subject": "Hỏi về an toàn phòng thí nghiệm", "date": "2025-11-18", "time": "14:00", "status": "completed", "type": "offline", "evaluationId": "eval-5" },
-    { "id": "apt-13", "tutorId": "tutor-1", "tutorName": "PGS.TS Nguyễn Thành Công", "studentId": "student-1", "studentName": "Nguyễn Văn An", "subject": "Câu hỏi về assignment", "date": "2025-11-05", "time": "10:00", "status": "booked", "type": "online" },
-    { "id": "apt-14", "tutorId": "tutor-8", "tutorName": "ThS. Nguyễn Thị Lan Anh", "studentId": "student-2", "studentName": "Trần Thị Châu", "subject": "Tư vấn về vật lý lượng tử", "date": "2025-12-01", "time": "11:00", "status": "booked", "type": "online" },
-    { "id": "apt-15", "tutorId": "tutor-5", "tutorName": "ThS. Phạm Thị Mai", "studentId": "student-6", "studentName": "Vũ Trung Kiên", "subject": "Tư vấn về an toàn thông tin", "date": "2025-12-03", "time": "16:00", "status": "booked", "type": "online" }
+    {
+      "id": "apt-1",
+      "tutorId": "1",
+      "tutorName": "PGS.TS Nguyễn Thành Công",
+      "studentId": "student-1",
+      "studentName": "Nguyễn Văn An",
+      "subject": "Review Đồ án KTPM",
+      "date": "2025-11-26",
+      "time": "09:00",
+      "status": "completed",
+      "type": "online",
+      "evaluationId": "eval-1"
+    },
+    {
+      "id": "apt-2",
+      "tutorId": "tutor-2",
+      "tutorName": "TS. Trần Thị Bích",
+      "studentId": "student-1",
+      "studentName": "Nguyễn Văn An",
+      "subject": "Thảo luận về mô hình AI",
+      "date": "2025-11-28",
+      "time": "14:00",
+      "status": "booked",
+      "type": "offline"
+    },
+    {
+      "id": "apt-3",
+      "tutorId": "1",
+      "tutorName": "PGS.TS Nguyễn Thành Công",
+      "studentId": "student-2",
+      "studentName": "Trần Thị Châu",
+      "subject": "Hướng dẫn cấu trúc project",
+      "date": "2025-11-28",
+      "time": "14:00",
+      "status": "booked",
+      "type": "online"
+    },
+    {
+      "id": "apt-4",
+      "tutorId": "tutor-3",
+      "tutorName": "ThS. Lê Văn Dũng",
+      "studentId": "student-3",
+      "studentName": "Lê Thị Xuân",
+      "subject": "Hỏi về quy trình thí nghiệm",
+      "date": "2025-12-05",
+      "time": "15:30",
+      "status": "booked",
+      "type": "offline"
+    },
+    {
+      "id": "apt-5",
+      "tutorId": "tutor-4",
+      "tutorName": "GS.TS Hoàng An",
+      "studentId": "student-1",
+      "studentName": "Nguyễn Văn An",
+      "subject": "Giải đáp bài tập lớn",
+      "date": "2025-11-20",
+      "time": "11:00",
+      "status": "cancelled",
+      "type": "online"
+    },
+    {
+      "id": "apt-6",
+      "tutorId": "tutor-2",
+      "tutorName": "TS. Trần Thị Bích",
+      "studentId": "student-2",
+      "studentName": "Trần Thị Châu",
+      "subject": "Định hướng nghiên cứu",
+      "date": "2025-10-15",
+      "time": "10:00",
+      "status": "completed",
+      "type": "offline",
+      "evaluationId": "eval-2"
+    },
+    {
+      "id": "apt-7",
+      "tutorId": "tutor-2",
+      "tutorName": "TS. Trần Thị Bích",
+      "studentId": "student-1",
+      "studentName": "Nguyễn Văn An",
+      "subject": "Hỏi về thuật toán KNN",
+      "date": "2025-10-18",
+      "time": "13:00",
+      "status": "completed",
+      "type": "offline",
+      "evaluationId": "eval-3"
+    },
+    {
+      "id": "apt-8",
+      "tutorId": "tutor-2",
+      "tutorName": "TS. Trần Thị Bích",
+      "studentId": "student-3",
+      "studentName": "Lê Thị Xuân",
+      "subject": "Tư vấn chọn đề tài",
+      "date": "2025-10-22",
+      "time": "13:00",
+      "status": "completed",
+      "type": "offline",
+      "evaluationId": "eval-4"
+    },
+    {
+      "id": "apt-9",
+      "tutorId": "tutor-2",
+      "tutorName": "TS. Trần Thị Bích",
+      "studentId": "student-1",
+      "studentName": "Nguyễn Văn An",
+      "subject": "Kiểm tra tiến độ NCKH",
+      "date": "2025-12-10",
+      "time": "10:00",
+      "status": "booked",
+      "type": "offline"
+    },
+    {
+      "id": "apt-10",
+      "tutorId": "tutor-2",
+      "tutorName": "TS. Trần Thị Bích",
+      "studentId": "student-2",
+      "studentName": "Trần Thị Châu",
+      "subject": "Giải đáp thắc mắc về bài báo",
+      "date": "2025-12-12",
+      "time": "14:00",
+      "status": "booked",
+      "type": "online"
+    },
+    {
+      "id": "apt-11",
+      "tutorId": "tutor-6",
+      "tutorName": "ThS. Vũ Hoàng",
+      "studentId": "student-5",
+      "studentName": "Hoàng Thị Thu",
+      "subject": "Review mạch điện tử",
+      "date": "2025-11-15",
+      "time": "09:30",
+      "status": "completed",
+      "type": "offline"
+    },
+    {
+      "id": "apt-12",
+      "tutorId": "tutor-3",
+      "tutorName": "ThS. Lê Văn Dũng",
+      "studentId": "student-3",
+      "studentName": "Lê Thị Xuân",
+      "subject": "Hỏi về an toàn phòng thí nghiệm",
+      "date": "2025-11-18",
+      "time": "14:00",
+      "status": "completed",
+      "type": "offline",
+      "evaluationId": "eval-5"
+    },
+    {
+      "id": "apt-13",
+      "tutorId": "1",
+      "tutorName": "PGS.TS Nguyễn Thành Công",
+      "studentId": "student-1",
+      "studentName": "Nguyễn Văn An",
+      "subject": "Câu hỏi về assignment",
+      "date": "2025-11-05",
+      "time": "10:00",
+      "status": "booked",
+      "type": "online"
+    },
+    {
+      "id": "apt-14",
+      "tutorId": "tutor-8",
+      "tutorName": "ThS. Nguyễn Thị Lan Anh",
+      "studentId": "student-2",
+      "studentName": "Trần Thị Châu",
+      "subject": "Tư vấn về vật lý lượng tử",
+      "date": "2025-12-01",
+      "time": "11:00",
+      "status": "booked",
+      "type": "online"
+    },
+    {
+      "id": "apt-15",
+      "tutorId": "tutor-5",
+      "tutorName": "ThS. Phạm Thị Mai",
+      "studentId": "student-6",
+      "studentName": "Vũ Trung Kiên",
+      "subject": "Tư vấn về an toàn thông tin",
+      "date": "2025-12-03",
+      "time": "16:00",
+      "status": "booked",
+      "type": "online"
+    },
+    {
+      "tutorId": "1",
+      "tutorName": "PGS.TS Nguyễn Thành Công",
+      "studentId": "placeholder",
+      "studentName": "",
+      "subject": "a",
+      "date": "2025-12-01",
+      "time": "09:00",
+      "status": "available",
+      "type": "online",
+      "id": "apt-1764331361170"
+    }
   ],
   "documents": [
-    { "id": "doc-1", "userId": "tutor-1", "name": "Đề cương KTPM.pdf", "url": "#", "size": "1.2MB", "uploadDate": "2025-10-20", "type": "pdf", "visibility": "public", "pinned": true },
-    { "id": "doc-2", "userId": "tutor-1", "name": "Slide bài giảng tuần 1.pptx", "url": "#", "size": "3.5MB", "uploadDate": "2025-10-22", "type": "pptx", "visibility": "public", "pinned": false },
-    { "id": "doc-3", "userId": "tutor-1", "name": "Ghi chú cá nhân.doc", "url": "#", "size": "500KB", "uploadDate": "2025-10-25", "type": "doc", "visibility": "private", "pinned": false },
-    { "id": "doc-4", "userId": "student-1", "name": "Báo cáo đồ án.docx", "url": "#", "size": "2.1MB", "uploadDate": "2025-11-01", "type": "doc", "visibility": "private", "pinned": false },
-    { "id": "doc-5", "userId": "tutor-2", "name": "Tổng quan về Học máy.pdf", "url": "#", "size": "4.8MB", "uploadDate": "2025-09-15", "type": "pdf", "visibility": "public", "pinned": true },
-    { "id": "doc-6", "userId": "student-2", "name": "draft_report_v1.docx", "url": "#", "size": "1.5MB", "uploadDate": "2025-11-10", "type": "doc", "visibility": "private", "pinned": false },
-    { "id": "doc-7", "userId": "tutor-2", "name": "Bài giảng Xử lý ngôn ngữ tự nhiên.pdf", "url": "#", "size": "5.2MB", "uploadDate": "2025-10-01", "type": "pdf", "visibility": "public", "pinned": false },
-    { "id": "doc-8", "userId": "tutor-8", "name": "Thí nghiệm quang học.zip", "url": "#", "size": "15.7MB", "uploadDate": "2025-11-20", "type": "zip", "visibility": "public", "pinned": false },
-    { "id": "doc-9", "userId": "student-1", "name": "Source code đồ án.zip", "url": "#", "size": "8.3MB", "uploadDate": "2025-11-24", "type": "zip", "visibility": "private", "pinned": true },
-    { "id": "doc-10", "userId": "student-3", "name": "Quy trình thí nghiệm hóa hữu cơ.pdf", "url": "#", "size": "850KB", "uploadDate": "2025-11-02", "type": "pdf", "visibility": "public", "pinned": false }
+    {
+      "id": "doc-1",
+      "userId": "1",
+      "name": "Đề cương KTPM.pdf",
+      "url": "#",
+      "size": "1.2MB",
+      "uploadDate": "2025-10-20",
+      "type": "pdf",
+      "visibility": "public",
+      "pinned": true
+    },
+    {
+      "id": "doc-2",
+      "userId": "1",
+      "name": "Slide bài giảng tuần 1.pptx",
+      "url": "#",
+      "size": "3.5MB",
+      "uploadDate": "2025-10-22",
+      "type": "pptx",
+      "visibility": "public",
+      "pinned": false
+    },
+    {
+      "id": "doc-3",
+      "userId": "1",
+      "name": "Ghi chú cá nhân.doc",
+      "url": "#",
+      "size": "500KB",
+      "uploadDate": "2025-10-25",
+      "type": "doc",
+      "visibility": "private",
+      "pinned": false
+    },
+    {
+      "id": "doc-4",
+      "userId": "student-1",
+      "name": "Báo cáo đồ án.docx",
+      "url": "#",
+      "size": "2.1MB",
+      "uploadDate": "2025-11-01",
+      "type": "doc",
+      "visibility": "private",
+      "pinned": false
+    },
+    {
+      "id": "doc-5",
+      "userId": "tutor-2",
+      "name": "Tổng quan về Học máy.pdf",
+      "url": "#",
+      "size": "4.8MB",
+      "uploadDate": "2025-09-15",
+      "type": "pdf",
+      "visibility": "public",
+      "pinned": true
+    },
+    {
+      "id": "doc-6",
+      "userId": "student-2",
+      "name": "draft_report_v1.docx",
+      "url": "#",
+      "size": "1.5MB",
+      "uploadDate": "2025-11-10",
+      "type": "doc",
+      "visibility": "private",
+      "pinned": false
+    },
+    {
+      "id": "doc-7",
+      "userId": "tutor-2",
+      "name": "Bài giảng Xử lý ngôn ngữ tự nhiên.pdf",
+      "url": "#",
+      "size": "5.2MB",
+      "uploadDate": "2025-10-01",
+      "type": "pdf",
+      "visibility": "public",
+      "pinned": false
+    },
+    {
+      "id": "doc-8",
+      "userId": "tutor-8",
+      "name": "Thí nghiệm quang học.zip",
+      "url": "#",
+      "size": "15.7MB",
+      "uploadDate": "2025-11-20",
+      "type": "zip",
+      "visibility": "public",
+      "pinned": false
+    },
+    {
+      "id": "doc-9",
+      "userId": "student-1",
+      "name": "Source code đồ án.zip",
+      "url": "#",
+      "size": "8.3MB",
+      "uploadDate": "2025-11-24",
+      "type": "zip",
+      "visibility": "private",
+      "pinned": true
+    },
+    {
+      "id": "doc-10",
+      "userId": "student-3",
+      "name": "Quy trình thí nghiệm hóa hữu cơ.pdf",
+      "url": "#",
+      "size": "850KB",
+      "uploadDate": "2025-11-02",
+      "type": "pdf",
+      "visibility": "public",
+      "pinned": false
+    }
   ],
   "evaluations": [
-    { "id": "eval-1", "sessionId": "apt-1", "tutorId": "tutor-1", "studentId": "student-1", "rating": 5, "comment": "Giảng viên rất nhiệt tình và giải đáp thắc mắc rất chi tiết." },
-    { "id": "eval-2", "sessionId": "apt-6", "tutorId": "tutor-2", "studentId": "student-2", "rating": 5, "comment": "Cô Bích cho em định hướng rất rõ ràng cho đề tài sắp tới. Em cảm ơn cô nhiều ạ." },
-    { "id": "eval-3", "sessionId": "apt-7", "tutorId": "tutor-2", "studentId": "student-1", "rating": 5, "comment": "Rất hữu ích, cô giải thích dễ hiểu." },
-    { "id": "eval-4", "sessionId": "apt-8", "tutorId": "tutor-2", "studentId": "student-3", "rating": 4, "comment": "Buổi tư vấn hiệu quả, nhưng thời gian hơi ngắn." },
-    { "id": "eval-5", "sessionId": "apt-12", "tutorId": "tutor-3", "studentId": "student-3", "rating": 3, "comment": "Thầy giải thích hơi khó hiểu một chút, nhưng vẫn hỗ trợ nhiệt tình." }
+    {
+      "id": "eval-1",
+      "sessionId": "apt-1",
+      "tutorId": "1",
+      "studentId": "student-1",
+      "rating": 5,
+      "comment": "Giảng viên rất nhiệt tình và giải đáp thắc mắc rất chi tiết."
+    },
+    {
+      "id": "eval-2",
+      "sessionId": "apt-6",
+      "tutorId": "tutor-2",
+      "studentId": "student-2",
+      "rating": 5,
+      "comment": "Cô Bích cho em định hướng rất rõ ràng cho đề tài sắp tới. Em cảm ơn cô nhiều ạ."
+    },
+    {
+      "id": "eval-3",
+      "sessionId": "apt-7",
+      "tutorId": "tutor-2",
+      "studentId": "student-1",
+      "rating": 5,
+      "comment": "Rất hữu ích, cô giải thích dễ hiểu."
+    },
+    {
+      "id": "eval-4",
+      "sessionId": "apt-8",
+      "tutorId": "tutor-2",
+      "studentId": "student-3",
+      "rating": 4,
+      "comment": "Buổi tư vấn hiệu quả, nhưng thời gian hơi ngắn."
+    },
+    {
+      "id": "eval-5",
+      "sessionId": "apt-12",
+      "tutorId": "tutor-3",
+      "studentId": "student-3",
+      "rating": 3,
+      "comment": "Thầy giải thích hơi khó hiểu một chút, nhưng vẫn hỗ trợ nhiệt tình."
+    }
   ],
   "tutorSchedule": {
-    "tutor-1": [
-      { "day": "Monday", "slots": ["09:00-11:00", "14:00-16:00"] },
-      { "day": "Wednesday", "slots": ["09:00-11:00"] },
-      { "day": "Friday", "slots": ["14:00-16:00"] }
+    "1": [
+      {
+        "day": "Monday",
+        "slots": [
+          "09:00",
+          "10:00",
+          "14:00",
+          "15:00"
+        ]
+      },
+      {
+        "day": "Wednesday",
+        "slots": [
+          "07:00"
+        ]
+      },
+      {
+        "day": "Friday",
+        "slots": [
+          "09:00"
+        ]
+      },
+      {
+        "day": "Thứ Tư",
+        "slots": [
+          "07:00",
+          "07:00",
+          "07:00",
+          "07:00",
+          "07:00",
+          "07:00",
+          "08:00"
+        ]
+      },
+      {
+        "day": "Thứ Ba",
+        "slots": [
+          "07:00",
+          "07:00"
+        ]
+      },
+      {
+        "day": "Thứ Năm",
+        "slots": [
+          "07:00"
+        ]
+      },
+      {
+        "day": "Thursday",
+        "slots": [
+          "09:00",
+          "13:00",
+          "16:00"
+        ]
+      },
+      {
+        "day": "Tuesday",
+        "slots": [
+          "07:00"
+        ]
+      }
     ],
     "tutor-2": [
-      { "day": "Tuesday", "slots": ["10:00-12:00", "13:00-15:00"] },
-      { "day": "Thursday", "slots": ["10:00-12:00", "14:00-16:00"] }
+      {
+        "day": "Tuesday",
+        "slots": [
+          "10:00-12:00",
+          "13:00-15:00"
+        ]
+      },
+      {
+        "day": "Thursday",
+        "slots": [
+          "10:00-12:00",
+          "14:00-16:00"
+        ]
+      }
     ],
     "tutor-3": [
-      { "day": "Monday", "slots": ["13:00-15:00"] },
-      { "day": "Tuesday", "slots": ["10:00-12:00"] }
+      {
+        "day": "Monday",
+        "slots": [
+          "13:00-15:00"
+        ]
+      },
+      {
+        "day": "Tuesday",
+        "slots": [
+          "10:00-12:00"
+        ]
+      }
     ],
     "tutor-4": [],
     "tutor-5": [
-       { "day": "Friday", "slots": ["08:00-10:00", "15:00-17:00"] }
+      {
+        "day": "Friday",
+        "slots": [
+          "08:00-10:00",
+          "15:00-17:00"
+        ]
+      }
     ],
     "tutor-6": [
-      { "day": "Tuesday", "slots": ["09:00-11:00"] },
-      { "day": "Thursday", "slots": ["09:00-11:00"] }
+      {
+        "day": "Tuesday",
+        "slots": [
+          "09:00-11:00"
+        ]
+      },
+      {
+        "day": "Thursday",
+        "slots": [
+          "09:00-11:00"
+        ]
+      }
     ],
     "tutor-7": [
-      { "day": "Wednesday", "slots": ["13:00-17:00"] }
+      {
+        "day": "Wednesday",
+        "slots": [
+          "13:00-17:00"
+        ]
+      }
     ],
     "tutor-8": [
-      { "day": "Monday", "slots": ["08:00-12:00"] },
-      { "day": "Tuesday", "slots": ["13:00-17:00"] },
-      { "day": "Wednesday", "slots": ["08:00-12:00"] },
-      { "day": "Thursday", "slots": ["13:00-17:00"] },
-      { "day": "Friday", "slots": ["08:00-12:00"] }
+      {
+        "day": "Monday",
+        "slots": [
+          "08:00-12:00"
+        ]
+      },
+      {
+        "day": "Tuesday",
+        "slots": [
+          "13:00-17:00"
+        ]
+      },
+      {
+        "day": "Wednesday",
+        "slots": [
+          "08:00-12:00"
+        ]
+      },
+      {
+        "day": "Thursday",
+        "slots": [
+          "13:00-17:00"
+        ]
+      },
+      {
+        "day": "Friday",
+        "slots": [
+          "08:00-12:00"
+        ]
+      }
     ]
   },
   "notifications": [
-    { "id": "notif-1", "userId": "student-1", "message": "Lịch hẹn 'Thảo luận về mô hình AI' với TS. Trần Thị Bích sắp diễn ra trong 1 giờ tới.", "date": "2025-11-28T09:00:00Z", "isRead": false, "link": "/schedule" },
-    { "id": "notif-2", "userId": "tutor-4", "message": "Buổi hẹn 'Giải đáp bài tập lớn' với Nguyễn Văn An đã bị hủy.", "date": "2025-11-20T11:05:00Z", "isRead": false, "link": "/schedule" },
-    { "id": "notif-3", "userId": "student-1", "message": "Buổi hẹn 'Giải đáp bài tập lớn' của bạn với GS.TS Hoàng An đã bị hủy bởi giảng viên.", "date": "2025-11-20T11:06:00Z", "isRead": true, "link": "/schedule" },
-    { "id": "notif-4", "userId": "tutor-1", "message": "Bạn đã nhận được đánh giá mới từ sinh viên Nguyễn Văn An cho buổi hẹn ngày 25/10.", "date": "2025-10-25T15:00:00Z", "isRead": true, "link": "/dashboard" },
-    { "id": "notif-5", "userId": "student-2", "message": "Lịch hẹn 'Hướng dẫn cấu trúc project' với PGS.TS Nguyễn Thành Công sắp diễn ra.", "date": "2025-11-29T08:30:00Z", "isRead": false, "link": "/schedule" }
+    {
+      "id": "notif-1",
+      "userId": "student-1",
+      "message": "Lịch hẹn 'Thảo luận về mô hình AI' với TS. Trần Thị Bích sắp diễn ra trong 1 giờ tới.",
+      "date": "2025-11-28T09:00:00Z",
+      "isRead": false,
+      "link": "/schedule"
+    },
+    {
+      "id": "notif-2",
+      "userId": "tutor-4",
+      "message": "Buổi hẹn 'Giải đáp bài tập lớn' với Nguyễn Văn An đã bị hủy.",
+      "date": "2025-11-20T11:05:00Z",
+      "isRead": false,
+      "link": "/schedule"
+    },
+    {
+      "id": "notif-3",
+      "userId": "student-1",
+      "message": "Buổi hẹn 'Giải đáp bài tập lớn' của bạn với GS.TS Hoàng An đã bị hủy bởi giảng viên.",
+      "date": "2025-11-20T11:06:00Z",
+      "isRead": true,
+      "link": "/schedule"
+    },
+    {
+      "id": "notif-4",
+      "userId": "1",
+      "message": "Bạn đã nhận được đánh giá mới từ sinh viên Nguyễn Văn An cho buổi hẹn ngày 25/10.",
+      "date": "2025-10-25T15:00:00Z",
+      "isRead": true,
+      "link": "/dashboard"
+    },
+    {
+      "id": "notif-5",
+      "userId": "student-2",
+      "message": "Lịch hẹn 'Hướng dẫn cấu trúc project' với PGS.TS Nguyễn Thành Công sắp diễn ra.",
+      "date": "2025-11-29T08:30:00Z",
+      "isRead": false,
+      "link": "/schedule"
+    }
   ]
 }

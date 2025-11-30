@@ -28,6 +28,12 @@ export class EvaluationsService {
     getEvaluationsByTutor(tutorId: string): Evaluation[] {
         const db = this.readDb();
         const formattedTutorId = tutorId.startsWith('tutor-') ? tutorId : `tutor-${tutorId}`;
-        return db.evaluations.filter(evaluation => evaluation.tutorId === formattedTutorId);
+        return db.evaluations.filter(evaluation => evaluation.tutorId === tutorId);
+    }
+
+    getEvaluationById(evalId: string): Evaluation | undefined {
+        const db = this.readDb();
+        const formattedEvaluationId = evalId.startsWith('tutor-') ? evalId : `tutor-${evalId}`;
+        return db.evaluations.find(evaluation => evaluation.id === evalId);
     }
 }
