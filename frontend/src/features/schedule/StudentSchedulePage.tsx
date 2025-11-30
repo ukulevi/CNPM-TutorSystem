@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, Video, Search, FileText, Star, Trash2 as DeleteIcon, ArrowLeft } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { Sidebar } from '../../components/shared/Sidebar';
