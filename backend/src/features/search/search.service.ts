@@ -28,7 +28,7 @@ interface Tutor { // This is the detailed tutor profile, used by searchTutors an
 interface Db {
     appointments: Appointment[];
     departments: Department[];
-    profiles: Tutor[]; // The 'profiles' array contains both tutors and students
+    users: Tutor[]; // The 'users' array contains both tutors and students
     // Add other db properties here
 }
 
@@ -53,7 +53,7 @@ export class SearchService {
     searchTutors(query: string): Tutor[] {
         const db = this.readDb();
         const lowerCaseQuery = query.toLowerCase();
-        return db.profiles.filter(profile =>
+        return db.users.filter(profile =>
             profile.role === 'tutor' &&
             (profile.name.toLowerCase().includes(lowerCaseQuery) ||
                 profile.specialization.toLowerCase().includes(lowerCaseQuery))
@@ -65,8 +65,8 @@ export class SearchService {
         return db.departments;
     }
 
-    getTutors(): Tutor[] { // Now returns detailed Tutor profiles from the 'profiles' array
+    getTutors(): Tutor[] { // Now returns detailed Tutor profiles from the 'users' array
         const db = this.readDb();
-        return db.profiles.filter(profile => profile.role === 'tutor');
+        return db.users.filter(profile => profile.role === 'tutor');
     }
 }

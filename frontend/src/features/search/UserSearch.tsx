@@ -11,7 +11,7 @@ import { getDepartments } from './api/findTutorApi';
 import { UserRole, Department } from '../../types'; // Import Department từ đây
 
 type UserSearchProps = {
-  userRole: 'student' | 'tutor';
+  userRole: 'student' | 'tutor' | 'admin';
   onNavigate: (page: string) => void;
   onSelectUser: (userId: string) => void;
 };

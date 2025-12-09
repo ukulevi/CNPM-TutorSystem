@@ -36,6 +36,24 @@ export class EvaluationsService { //(nhi) handle đọc ghi evaluations
     getEvaluationsByTutor(tutorId: string): Evaluation[] {
         const db = this.readDb();
         const formattedTutorId = tutorId.startsWith('tutor-') ? tutorId : `tutor-${tutorId}`;
-        return db.evaluations.filter(evaluation => evaluation.tutorId === formattedTutorId);
+        return db.evaluations.filter(evaluation => evaluation.tutorId === tutorId);
+    }
+
+    getEvaluationById(evalId: string): Evaluation | undefined {
+        const db = this.readDb();
+        const formattedEvaluationId = evalId.startsWith('tutor-') ? evalId : `tutor-${evalId}`;
+        return db.evaluations.find(evaluation => evaluation.id === evalId);
+    }
+
+    createEvaluation(evaluation: Omit<Evaluation, 'id'>): Evaluation {
+        const db = this.readDb();
+        const newEvaluation: Evaluation = {
+            ...evaluation,
+            id: `eval-${Date.now()}`
+        };
+        db.evaluations.push(newEvaluation);
+        this.writeDb(db);
+        console.log('Created evaluation:', newEvaluation);
+        return newEvaluation;
     }
 }

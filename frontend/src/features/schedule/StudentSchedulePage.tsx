@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, Video, Search, FileText, Star, Trash2 as DeleteIcon, ArrowLeft } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { Sidebar } from '../../components/shared/Sidebar';
@@ -8,7 +8,7 @@ import { CalendarDay, CalendarHour, CalendarSlot } from '../../types';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 
 type StudentSchedulePageProps = {
-  userRole: 'student'; // Chỉ dành cho Student
+  userRole: 'student' | 'tutor' | 'admin';
   onNavigate: (page: string) => void;
   onGoBack: () => void;
 };
@@ -19,7 +19,7 @@ export function StudentSchedulePage({ userRole, onNavigate, onGoBack }: StudentS
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [slotToCancel, setSlotToCancel] = useState<{ day: string; date: string; hour: string; slot: CalendarSlot } | null>(null);
 
-  const studentId = 'student-01'; // ID Sinh viên giả lập
+  const studentId = 'student-1'; // ID Sinh viên giả lập
 
   const fetchSchedule = async () => {
     setIsLoading(true);
@@ -34,9 +34,28 @@ export function StudentSchedulePage({ userRole, onNavigate, onGoBack }: StudentS
   }, [studentId]); // Thêm studentId vào dependency array
 
   const handleSlotClick = (day: string, date: string, hour: string, slot: CalendarSlot | null) => {
-    if (slot && slot.status === 'booked') {
+    if (slot && (slot.status === 'booked' || slot.status === 'ongoing' || slot.status === 'upcoming')) {
       setSlotToCancel({ day, date, hour, slot });
       setShowCancelDialog(true);
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'booked':
+        return { text: 'Đã đặt - Chờ xác nhận', bg: 'bg-gray-100', border: 'border-gray-300', text_color: 'text-black-700' };
+      case 'upcoming':
+        return { text: 'Đã ghi danh', bg: 'bg-blue-100', border: 'border-blue-300', text_color: 'text-blue-700' };
+      case 'ongoing':
+        return { text: 'Đang diễn ra', bg: 'bg-yellow-100', border: 'border-yellow-300', text_color: 'text-yellow-700' };
+      case 'completed':
+        return { text: 'Đã hoàn thành', bg: 'bg-green-100', border: 'border-green-300', text_color: 'text-green-700' };
+      case 'evaluated':
+        return { text: 'Đã đánh giá', bg: 'bg-orange-100', border: 'border-orange-300', text_color: 'text-gray-700' };
+      case 'cancelled':
+        return { text: 'Đã hủy', bg: 'bg-red-100', border: 'border-red-300', text_color: 'text-red-700' };
+      default:
+        return { text: '', bg: '', border: '', text_color: '' };
     }
   };
 
@@ -56,7 +75,7 @@ export function StudentSchedulePage({ userRole, onNavigate, onGoBack }: StudentS
   return (
     <div className="flex">
       <Sidebar
-        userRole={userRole}
+        userRole={userRole === 'admin' ? 'tutor' : userRole}
         userName="Nguyễn Văn A"
         currentPage="student-schedule"
         onNavigate={onNavigate}
@@ -81,10 +100,15 @@ export function StudentSchedulePage({ userRole, onNavigate, onGoBack }: StudentS
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="w-5 h-5 text-[#003366]" />
-                  <h2 className="text-[#003366]">Lịch tuần (11/11 - 17/11/2025)</h2>
+                  <h2 className="text-[#003366]">Lịch tuần (17/11 - 23/11/2025)</h2>
                 </div>
                 <div className="flex gap-4 text-sm">
-                  <div className="flex items-center gap-2"><div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div><span className="text-gray-600">Đã ghi danh</span></div>
+                  <div className="flex items-center gap-2"><div className="w-4 h-4 bg-gray-100 border border-gray-300 rounded"></div><span className="text-gray-600">Đã đặt</span></div>
+                  <div className="flex items-center gap-2"><div className="w-4 h-4 bg-blue-100 border border-blue-300 rounded"></div><span className="text-gray-600">Đã ghi danh</span></div>
+                  <div className="flex items-center gap-2"><div className="w-4 h-4 bg-yellow-100 border border-yellow-300 rounded"></div><span className="text-gray-600">Đang diễn ra</span></div>
+                  <div className="flex items-center gap-2"><div className="w-4 h-4 bg-green-100 border border-green-300 rounded"></div><span className="text-gray-600">Đã hoàn thành</span></div>
+                  <div className="flex items-center gap-2"><div className="w-4 h-4 bg-orange-100 border border-orange-300 rounded"></div><span className="text-gray-600">Đã đánh giá</span></div>
+                  <div className="flex items-center gap-2"><div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div><span className="text-gray-600">Đã hủy</span></div>
                 </div>
               </div>
 
@@ -106,36 +130,37 @@ export function StudentSchedulePage({ userRole, onNavigate, onGoBack }: StudentS
                     </thead>
                     <tbody>
                       {schedule.length > 0 && schedule[0].hours.map((hourObj: CalendarHour) => {
-                          const hour = hourObj.hour;
-                          return (
-                            <tr key={hour}>
-                              <td className="text-center p-2 bg-gray-50 border-b border-r">
-                                <span className="text-gray-700 text-sm">{hour}</span>
-                              </td>
-                              {schedule.map((dayData: CalendarDay) => {
-                                const hourData = dayData.hours.find((h: CalendarHour) => h.hour === hour);
-                                const slot = hourData?.slot;
-                                return (
-                                  <td key={`${dayData.date}-${hour}`} className="p-0 border-b border-r last:border-r-0">
-                                    <button                                      onClick={() => handleSlotClick(dayData.day, dayData.date, hour, slot ?? null)}
-                                      disabled={!slot || slot.status !== 'booked'}
-                                      className={`w-full h-full p-2 text-left transition-colors min-h-[60px] flex items-center justify-center ${
-                                        slot ? 'bg-red-100 border-red-200 hover:bg-red-200 cursor-pointer' : ''
+                        const hour = hourObj.hour;
+                        return (
+                          <tr key={hour}>
+                            <td className="text-center p-2 bg-gray-50 border-b border-r">
+                              <span className="text-gray-700 text-sm">{hour}</span>
+                            </td>
+                            {schedule.map((dayData: CalendarDay) => {
+                              const hourData = dayData.hours.find((h: CalendarHour) => h.hour === hour);
+                              const slot = hourData?.slot;
+                              const statusInfo = slot ? getStatusLabel(slot.status) : null;
+                              return (
+                                <td key={`${dayData.date}-${hour}`} className="p-0 border-b border-r last:border-r-0">
+                                  <button onClick={() => handleSlotClick(dayData.day, dayData.date, hour, slot ?? null)}
+                                    disabled={!slot || (slot.status !== 'booked' && slot.status !== 'ongoing' && slot.status !== 'upcoming')}
+                                    className={`w-full h-full p-2 text-left transition-colors min-h-[60px] flex items-center justify-center ${slot ? `${statusInfo?.bg} border ${statusInfo?.border} ${(slot.status === 'booked' || slot.status === 'ongoing' || slot.status === 'upcoming') ? 'hover:opacity-80 cursor-pointer' : ''}` : ''
                                       }`}
-                                    >
-                                      {slot && (
-                                        <div className="text-xs text-center">
-                                          <p className="font-semibold text-[#003366]">{slot.subject}</p>
-                                          {slot.tutorName && <p className="text-gray-600">{slot.tutorName}</p>}
-                                        </div>
-                                      )}
-                                    </button>
-                                  </td>
-                                );
-                              })}
-                            </tr>
-                          );
-                        })}
+                                  >
+                                    {slot && (
+                                      <div className="text-xs text-center w-full">
+                                        <p className="font-semibold text-[#003366]">{slot.subject}</p>
+                                        {slot.tutorName && <p className="text-gray-600 text-[10px]">{slot.tutorName}</p>}
+                                        {statusInfo && <p className={`text-[10px] mt-1 font-medium ${statusInfo.text_color}`}>{statusInfo.text}</p>}
+                                      </div>
+                                    )}
+                                  </button>
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>

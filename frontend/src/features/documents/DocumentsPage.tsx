@@ -13,21 +13,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Badge } from '../../components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
 import { Document as Doc } from '../../types';
-
 type DocumentsPageProps = {
   userRole: 'student' | 'tutor';
   currentUserId: string; // Thêm ID của người dùng hiện tại
   onNavigate: (page: string) => void;
   onGoBack: () => void;
 };
-
 const fileIcons = {
   pdf: <FileText className="w-6 h-6 text-red-500" />,
   doc: <FileText className="w-6 h-6 text-blue-500" />,
   image: <Image className="w-6 h-6 text-green-500" />,
   other: <File className="w-6 h-6 text-gray-500" />,
 };
-
 export function DocumentsPage({ userRole, currentUserId, onNavigate, onGoBack }: DocumentsPageProps) {
   const [documents, setDocuments] = useState<Doc[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -152,7 +149,6 @@ export function DocumentsPage({ userRole, currentUserId, onNavigate, onGoBack }:
     setDocuments(initialDocuments); // Hoàn tác về trạng thái ban đầu
     setHasUnsavedChanges(false);
   };
-
   const openDeleteDialog = (doc: Doc) => {
     setDocToDelete(doc);
     setShowDeleteDialog(true);
@@ -172,7 +168,6 @@ export function DocumentsPage({ userRole, currentUserId, onNavigate, onGoBack }:
     setShowDeleteDialog(false);
     setDocToDelete(null);
   };
-
   return (
     <div className="flex">
       <Sidebar
@@ -182,7 +177,6 @@ export function DocumentsPage({ userRole, currentUserId, onNavigate, onGoBack }:
         onNavigate={onNavigate}
         onLogout={() => onNavigate('login')}
       />
-
       <div className="flex-1 bg-gray-50">
         <div className="bg-white border-b border-gray-200 px-8 py-6">
           <Button
@@ -316,7 +310,6 @@ export function DocumentsPage({ userRole, currentUserId, onNavigate, onGoBack }:
           </Card>
         </div>
       </div>
-
       {/* Upload Dialog */}
       <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
         <DialogContent>
@@ -386,7 +379,6 @@ export function DocumentsPage({ userRole, currentUserId, onNavigate, onGoBack }:
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
       {/* Delete Confirmation Dialog */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>

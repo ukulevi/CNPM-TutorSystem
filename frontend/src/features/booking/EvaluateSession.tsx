@@ -4,6 +4,9 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { Textarea } from '../../components/ui/textarea';
 import { Session } from '../../types';
+import { createEvaluation } from './api/evaluationApi';
+
+const API_URL = 'http://localhost:3001/api';
 
 type EvaluateSessionProps = {
   session: Session;
@@ -14,11 +17,56 @@ export function EvaluateSession({ session, onNavigate }: EvaluateSessionProps) {
   const [rating, setRating] = useState<number>(0);
   const [hoveredRating, setHoveredRating] = useState<number>(0);
   const [feedback, setFeedback] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = () => {
-    console.log('Submitting evaluation:', { sessionId: session.id, rating, feedback });
-    // In a real app, this would save to database
-    onNavigate('student-dashboard');
+  const handleSubmit = async () => {
+    if (rating === 0) return;
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const studentId = 'student-1'; // ID sinh viên giả lập
+
+      await createEvaluation({
+        sessionId: session.id,
+        tutorId: session.tutorId,
+        studentId: studentId,
+        rating: rating,
+        comment: feedback,
+      });
+
+      console.log('Evaluation submitted successfully');
+
+      // Update appointment status to 'evaluated'
+      try {
+        const updateResponse = await fetch(`${API_URL}/booking/${session.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            status: 'evaluated',
+          }),
+        });
+
+        if (!updateResponse.ok) {
+          console.error('Failed to update appointment status to evaluated');
+          // Don't fail the whole operation if status update fails
+        }
+      } catch (updateErr) {
+        console.error('Error updating appointment status:', updateErr);
+        // Don't throw error - evaluation already saved
+      }
+
+      onNavigate('student-dashboard');
+    } catch (err: any) {
+      console.error('Error submitting evaluation:', err);
+      setError('Không thể gửi đánh giá. Vui lòng thử lại.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -75,11 +123,10 @@ export function EvaluateSession({ session, onNavigate }: EvaluateSessionProps) {
                   className="transition-transform hover:scale-110"
                 >
                   <Star
-                    className={`w-12 h-12 ${
-                      star <= (hoveredRating || rating)
-                        ? 'fill-yellow-400 text-yellow-400'
-                        : 'text-gray-300'
-                    } transition-colors`}
+                    className={`w-12 h-12 ${star <= (hoveredRating || rating)
+                      ? 'fill-yellow-400 text-yellow-400'
+                      : 'text-gray-300'
+                      } transition-colors`}
                   />
                 </button>
               ))}
@@ -118,20 +165,27 @@ export function EvaluateSession({ session, onNavigate }: EvaluateSessionProps) {
               variant="outline"
               onClick={() => onNavigate('student-dashboard')}
               className="flex-1"
+              disabled={isSubmitting}
             >
               Để sau
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={rating === 0}
+              disabled={rating === 0 || isSubmitting}
               className="flex-1 bg-[#003366] hover:bg-[#004488] disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
               <Send className="w-4 h-4 mr-2" />
-              Gửi đánh giá
+              {isSubmitting ? 'Đang gửi...' : 'Gửi đánh giá'}
             </Button>
           </div>
 
-          {rating === 0 && (
+          {error && (
+            <p className="text-center text-red-500 text-sm mt-4">
+              {error}
+            </p>
+          )}
+
+          {rating === 0 && !error && (
             <p className="text-center text-gray-500 text-sm mt-4">
               Vui lòng chọn số sao để gửi đánh giá
             </p>

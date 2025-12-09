@@ -86,7 +86,7 @@ export class ProfileService {
     getProfileById(userId: string): Profile | undefined {
         console.log('Searching for profile with userId:', userId);
         const db = this.readDb();
-        const profile = db.profiles.find(profile => profile.id === userId);
+        const profile = db.users.find(profile => profile.id === userId);
         console.log('Found profile:', profile);
         return profile;
     }
@@ -96,7 +96,43 @@ export class ProfileService {
      */
     getAllProfiles(): Profile[] {
         const db = this.readDb();
-        return db.profiles;
+        return db.users;
+    }
+
+    /**
+     * Update user profile with new data
+     */
+    updateProfile(userId: string, updates: Partial<Profile>): Profile | undefined {
+        const db = this.readDb();
+        const profileIndex = db.users.findIndex(p => p.id === userId);
+
+        if (profileIndex === -1) {
+            console.error(`Profile with ID ${userId} not found`);
+            return undefined;
+        }
+
+        // Merge updates with existing profile
+        db.users[profileIndex] = {
+            ...db.users[profileIndex],
+            ...updates,
+            id: userId, // Prevent ID from being changed
+        };
+
+        this.writeDb(db);
+        console.log('Profile updated:', db.users[profileIndex]);
+        return db.users[profileIndex];
+    }
+
+    /**
+     * Search profiles by name or email (for user search feature)
+     */
+    searchProfiles(query: string): Profile[] {
+        const db = this.readDb();
+        const lowerQuery = query.toLowerCase();
+        return db.users.filter(p =>
+            p.name.toLowerCase().includes(lowerQuery) ||
+            p.email.toLowerCase().includes(lowerQuery)
+        );
     }
 
     /**
@@ -135,3 +171,4 @@ export class ProfileService {
         );
     }
 }
+

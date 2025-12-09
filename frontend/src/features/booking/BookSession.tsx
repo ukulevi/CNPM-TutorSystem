@@ -139,7 +139,7 @@ export function BookSession({ tutor, currentUserId, currentUserName, onNavigate 
                 <h2 className="text-[#003366]">Chọn thời gian phù hợp</h2>
               </div>
 
-              {/* Legend */}
+              {/* Legend
               <div className="flex gap-6 mb-6 text-sm">
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-[#E0F7FF] border border-[#4DB8FF] rounded"></div>
@@ -157,7 +157,7 @@ export function BookSession({ tutor, currentUserId, currentUserName, onNavigate 
                   <MapPin className="w-4 h-4 text-[#003366]" />
                   <span className="text-gray-600">Trực tiếp</span>
                 </div>
-              </div>
+              </div> */}
 
               {/* Loading State */}
               {isLoading && (

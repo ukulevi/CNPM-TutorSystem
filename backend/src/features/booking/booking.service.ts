@@ -112,4 +112,38 @@ export class BookingService {
         this.writeDb(db);
         return newAppointment;
     }
+
+    deleteAppointment(appointmentId: string): boolean {
+        const db = this.readDb();
+        const initialLength = db.appointments.length;
+
+        const updatedAppointments = db.appointments.filter(apt => apt.id !== appointmentId);
+
+
+        if (updatedAppointments.length === initialLength) {
+            return false;
+        }
+
+        db.appointments = updatedAppointments;
+        this.writeDb(db);
+        return true;
+    }
+
+    updateAppointment(appointmentId: string, updates: Partial<Appointment>): Appointment | null {
+        const db = this.readDb();
+        const appointmentIndex = db.appointments.findIndex(apt => apt.id === appointmentId);
+
+        if (appointmentIndex === -1) {
+            console.error(`Appointment with id ${appointmentId} not found`);
+            return null;
+        }
+
+        const updatedAppointment = { ...db.appointments[appointmentIndex], ...updates };
+        db.appointments[appointmentIndex] = updatedAppointment;
+        this.writeDb(db);
+
+        console.log(`Updated appointment ${appointmentId} with status: ${updates.status}`);
+        return updatedAppointment;
+    }
 }
+

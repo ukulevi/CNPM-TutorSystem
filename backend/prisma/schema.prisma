@@ -62,4 +62,5 @@ model Department {
 enum Role {
   STUDENT
   TUTOR
+  ADMIN
 }

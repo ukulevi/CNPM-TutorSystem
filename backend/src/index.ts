@@ -9,6 +9,9 @@ import profileRoutes from './features/profile/profile.route';
 import scheduleRoutes from './features/schedule/schedule.route';
 import searchRoutes from './features/search/search.route';
 import evaluationsRoutes from './features/evaluations/evaluations.route'; // Import new evaluations route
+import databaseRoutes from './features/admin/database/database.route';
+import analyticsRoutes from './features/admin/analytics/analytics.route';
+import dataSyncRoutes from './features/admin/dataSync/dataSync.route';
 
 // Initialize Express app
 const app: Express = express();
@@ -17,6 +20,12 @@ const port = 3001;
 // Middlewares
 app.use(cors()); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Enable JSON body parsing
+
+// (nhi) Global error handler - catch any unhandled errors
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error('[Global Error Handler]:', err);
+  res.status(500).json({ message: 'Internal server error', error: err.message });
+});
 
 // --- API Routes ---
 // Connect feature routes to the main app
@@ -28,6 +37,9 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/schedule', scheduleRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/evaluations', evaluationsRoutes); // Mount new evaluations route
+app.use('/api/admin', analyticsRoutes);
+app.use('/api/admin/sync', dataSyncRoutes);
+app.use('/api/admin/database', databaseRoutes);
 
 // (nhi) Global error handler - catch any unhandled errors
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

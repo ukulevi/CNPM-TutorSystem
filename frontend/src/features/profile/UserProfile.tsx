@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../../components/ui/dialog';
+import { ScrollArea } from "../../components/ui/scroll-area";
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { Sidebar } from '../../components/shared/Sidebar';
@@ -20,7 +21,6 @@ import { getUserProfile, updateUserProfile } from './api/profileApi';
 import { getScheduleForTutor, getScheduleForStudent } from '../schedule/api/calendarApi';
 import { getDocuments } from '../documents/api/documentApi';
 import { Tutor, CalendarDay, Document as Doc } from '../../types'; // Đã sửa ở các bước trước
-
 // Define the UserProfileData type here or import from a central types file
 // if it's used elsewhere. Renamed from UserProfile to UserProfileData to avoid conflict
 type UserProfileData = {
@@ -41,7 +41,6 @@ type UserProfileData = {
   scheduleVisibility?: 'public' | 'private';
   documentsVisibility?: 'public' | 'private';
 };
-
 type UserProfileProps = {
   profileId: string; // ID của người dùng cần xem hồ sơ
   currentUserId: string; // ID của người dùng đang đăng nhập
@@ -50,7 +49,6 @@ type UserProfileProps = {
   onSelectTutor: (tutor: Tutor) => void;
   onGoBack: () => void;
 };
-
 export function UserProfile({ profileId, currentUserId, userRole, onNavigate, onSelectTutor, onGoBack }: UserProfileProps) {
   const [profile, setProfile] = useState<UserProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -110,17 +108,13 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
     };
     fetchProfile();
   }, [profileId, currentUserId, userRole]);
-
   const getInitials = (name: string) => {
     const parts = name.split(' ');
     return parts[parts.length - 2]?.charAt(0) + parts[parts.length - 1]?.charAt(0);
   };
-
   const isOwnProfile = profileId === currentUserId;
   const canViewSchedule = isOwnProfile || profile?.scheduleVisibility === 'public';
   const canViewDocuments = isOwnProfile || profile?.documentsVisibility === 'public';
-
-
   const handleBookAppointment = () => {
     if (profile && profile.role === 'tutor') {
       const tutorData: Tutor = {
@@ -134,7 +128,6 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
       onSelectTutor(tutorData);
     }
   };
-
   const handleOpenEditDialog = () => {
     if (!profile) return;
     // Khởi tạo form với dữ liệu hiện tại, chuyển từ mảng object thành chuỗi
@@ -146,7 +139,6 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
     });
     setShowEditDialog(true);
   };
-
   const handleSaveChanges = async () => {
     if (!profile) return;
 
@@ -179,12 +171,10 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
 
     setShowEditDialog(false);
   };
-
   const handleEditFormChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setEditData(prev => ({ ...prev, [name]: value }));
   };
-
   const handleVisibilityChange = (name: 'scheduleVisibility' | 'documentsVisibility', value: 'public' | 'private') => {
     setEditData(prev => ({ ...prev, [name]: value }));
   };
@@ -219,7 +209,6 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
   if (!profile) {
     return <div className="flex h-screen items-center justify-center">Không tìm thấy hồ sơ người dùng.</div>;
   }
-
   return (
     <div className="flex">
       <Sidebar
@@ -229,7 +218,6 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
         onNavigate={onNavigate}
         onLogout={() => onNavigate('login')}
       />
-
       <div className="flex-1 bg-gray-50">
         {/* Header */}
         <div className="bg-white border-b border-gray-200 px-8 py-6">
@@ -243,7 +231,6 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
           </Button>
           <h1 className="text-[#003366]">Hồ sơ cá nhân</h1>
         </div>
-
         {/* Main Content */}
         <div className="p-8 max-w-4xl mx-auto">
           <Card>
@@ -275,7 +262,6 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
                     </Button>
                   ) : null}
                 </div>
-
                 {/* Detailed Info */}
                 <div className="w-full md:w-2/3 space-y-6">
                   {/* Contact Info */}
@@ -288,7 +274,6 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
                       )}
                     </div>
                   </div>
-
                   {/* Tutor Specific Info */}
                   {profile.role === 'tutor' && (
                     <>
@@ -342,13 +327,13 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
                     </h3>
                     {canViewSchedule ? (
                       <div className="text-sm text-gray-700">
-                        {schedule.flatMap(day => day.hours).filter(h => h.slot).length > 0 ? (
+                        {schedule.flatMap(day => day.hours).filter(h => h.slot && (isOwnProfile || profile?.role !== 'tutor' || h.slot.status === 'available')).length > 0 ? (
                           <ul className="space-y-1">
                             {schedule.map(day =>
-                              day.hours.filter(h => h.slot).map((hour, idx) => (
+                              day.hours.filter(h => h.slot && (isOwnProfile || profile?.role !== 'tutor' || h.slot.status === 'available')).map((hour, idx) => (
                                 <li key={`${day.date}-${hour.hour}-${idx}`}>
                                   <strong>{day.day}, {hour.hour}:</strong> {hour.slot?.subject}
-                                  {hour.slot?.tutorName && ` (với ${hour.slot.tutorName})`}
+                                  {/* {hour.slot?.tutorName && ` (với ${hour.slot.tutorName})`} */}
                                   {hour.slot?.studentName && ` (với ${hour.slot.studentName})`}
                                 </li>
                               ))
@@ -365,7 +350,6 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
                       </div>
                     )}
                   </div>
-
                   {/* Documents Section */}
                   <div>
                     <h3 className="text-lg text-[#003366] mb-2 border-b pb-2 flex items-center gap-2">
@@ -402,7 +386,6 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
           </Card>
         </div>
       </div>
-
       {/* Edit Profile Dialog */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent>
@@ -529,13 +512,9 @@ export function UserProfile({ profileId, currentUserId, userRole, onNavigate, on
                 </button>
               </div>
             </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowEditDialog(false)}>Hủy</Button>
-            <Button onClick={handleSaveChanges} className="bg-[#003366] hover:bg-[#004488]">Lưu thay đổi</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        {/* </ScrollArea> */}
+        </Dialog>
     </div>
   );
 }

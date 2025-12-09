@@ -3,9 +3,13 @@ import path from 'path';
 
 const dbPath = path.resolve(__dirname, '../../../db/db.json');
 
-interface Schedule {
+interface ScheduleDay {
     // Define schedule properties here
+    day: string,
+    slots: string[]
 }
+
+type Schedule = ScheduleDay[];
 
 interface Db {
     tutorSchedule: { [tutorId: string]: Schedule };
@@ -77,5 +81,71 @@ export class ScheduleService {
     } getScheduleByTutor(tutorId: string): Schedule | undefined {
         const db = this.readDb();
         return db.tutorSchedule[tutorId];
+    }
+
+    freeSlot(tutorId: string, day: string, hour: string) {
+        const db = this.readDb();
+
+        const tutorSchedule = db.tutorSchedule[tutorId];
+        if (!tutorSchedule) {
+            // Tutor schedule not found
+            return false;
+        }
+        const targetDay = tutorSchedule.find(d => d.day === day);
+        if (!targetDay) {
+            // Day not found in schedule
+            return false;
+        }
+
+        const initialSlotCount = targetDay.slots.length;
+
+        // Updated filter to handle both single hours and ranges
+        const updatedSlots = targetDay.slots.filter(slot => {
+            // If slot is a single hour (e.g., "09:00"), remove if it matches hour
+            if (!slot.includes('-')) {
+                return slot !== hour;
+            }
+            // If slot is a range (e.g., "09:00-11:00"), check if hour is within range
+            const [start, end] = slot.split('-');
+            const startHour = parseInt(start.substring(0, 2), 10);
+            const endHour = parseInt(end.substring(0, 2), 10);
+            const targetHour = parseInt(hour.substring(0, 2), 10);
+            
+            // Keep the slot if the hour is NOT within the range
+            return !(targetHour >= startHour && targetHour < endHour);
+        });
+
+        if (updatedSlots.length === initialSlotCount) {
+            return false;
+        }
+
+        targetDay.slots = updatedSlots;
+
+        this.writeDb(db);
+        return true;
+    };
+
+    addAvailableSlot(tutorId: string, day: string, hour: string) {
+        const db = this.readDb();
+        const tutorSchedule = db.tutorSchedule[tutorId];
+        console.log(tutorSchedule[0])
+        if (!tutorSchedule) {
+            // Tutor schedule not found
+            return false;
+        }
+        const targetDay = tutorSchedule.find(d => d.day === day);
+        if (!targetDay) {
+            let newDay = {
+                day: day,
+                slots: [hour],
+            }
+            tutorSchedule.push(newDay);
+        }
+        else {
+            targetDay.slots.push(hour);
+        }
+
+        this.writeDb(db);
+        return true;
     }
 }

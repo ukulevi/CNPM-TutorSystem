@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { LoginPage } from './features/authentication/LoginPage.tsx';
+import AdminDashboard from './features/dashboard/AdminDashboard.tsx';
 import { StudentDashboard } from './features/dashboard/StudentDashboard.tsx';
 import AdminDashboard from './features/dashboard/AdminDashboard.tsx';
 import { FindTutor } from './features/search/FindTutor.tsx';
@@ -83,6 +84,111 @@ function App() {
   // ID người dùng giả lập
   const currentUserId = currentUser ? currentUser.id : '';
 
+  const renderContent = () => {
+    if (currentPage === 'login') {
+      return <LoginPage onLogin={handleLogin} />;
+    }
+
+    if (!userRole) {
+      // You can show a loading spinner or redirect to login
+      return <div>Loading user...</div>;
+    }
+
+    switch (currentPage) {
+      case 'admin-dashboard':
+        return userRole === 'admin' ? (
+          <AdminDashboard onNavigate={handleNavigate} onLogout={handleLogout} />
+        ) : null;
+      case 'student-dashboard':
+        return userRole === 'student' ? (
+          <StudentDashboard
+            onNavigate={handleNavigate}
+            onLogout={handleLogout}
+            onEvaluate={handleEvaluate}
+            onSelectTutor={handleSelectTutor}
+            onSelectUser={handleSelectUser}
+          />
+        ) : null;
+      case 'profile':
+        return (
+          <UserProfile
+            profileId={currentUserId}
+            currentUserId={currentUserId}
+            userRole={userRole as 'student' | 'tutor'}
+            onNavigate={handleNavigate}
+            onSelectTutor={handleBookSession}
+            onGoBack={handleGoBack}
+          />
+        );
+      case 'find-tutor':
+        return <FindTutor onNavigate={handleNavigate} onSelectTutor={handleSelectTutor} />;
+      case 'tutor-dashboard':
+        return userRole === 'tutor' ? (
+          <TutorDashboard onNavigate={handleNavigate} onLogout={handleLogout} />
+        ) : null;
+      case 'my-schedule':
+      case 'edit-schedule':
+        return userRole === 'tutor' ? (
+          <TutorSchedulePage userRole={userRole} onNavigate={handleNavigate} onGoBack={handleGoBack} />
+        ) : null;
+      case 'student-schedule':
+        return userRole === 'student' ? (
+          <StudentSchedulePage userRole={userRole} onNavigate={handleNavigate} onGoBack={handleGoBack} />
+        ) : null;
+      case 'documents':
+        return (
+          <DocumentsPage
+            userRole={userRole as 'student' | 'tutor'}
+            currentUserId={currentUserId}
+            onNavigate={handleNavigate}
+            onGoBack={handleGoBack}
+          />
+        );
+      case 'user-search':
+        return (
+          <UserSearch
+            userRole={userRole as 'student' | 'tutor'}
+            onNavigate={handleNavigate}
+            onSelectUser={handleSelectUser}
+          />
+        );
+      case 'profile-view':
+        return viewingProfileId ? (
+          <UserProfile
+            profileId={viewingProfileId}
+            currentUserId={currentUserId}
+            userRole={userRole as 'student' | 'tutor'}
+            onNavigate={handleNavigate}
+            onSelectTutor={handleBookSession}
+            onGoBack={handleGoBack}
+          />
+        ) : null;
+      case 'book-session':
+        return selectedTutor ? (
+          <BookSession
+            tutor={selectedTutor}
+            currentUserId={currentUserId}
+            currentUserName="Nguyễn Văn A"
+            onNavigate={handleNavigate}
+          />
+        ) : null;
+      case 'evaluate-session':
+        return sessionToEvaluate ? (
+          <EvaluateSession session={sessionToEvaluate} onNavigate={handleNavigate} />
+        ) : null;
+      default:
+        // Redirect to a default page based on role if currentPage is invalid
+        if (userRole === 'admin') {
+          setCurrentPage('admin-dashboard');
+        } else if (userRole === 'tutor') {
+          setCurrentPage('tutor-dashboard');
+        } else {
+          setCurrentPage('student-dashboard');
+        }
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {currentPage === 'login' && <LoginPage onLogin={handleLogin} />}
@@ -103,10 +209,10 @@ function App() {
         <TutorDashboard onNavigate={handleNavigate} onLogout={handleLogout} />
       )}
       {currentPage === 'my-schedule' && userRole === 'tutor' && (
-        <TutorSchedulePage userRole={userRole} onNavigate={handleNavigate} onGoBack={handleGoBack} />
+        <TutorSchedulePage userRole={userRole as 'tutor'} onNavigate={handleNavigate} onGoBack={handleGoBack} />
       )}
       {currentPage === 'edit-schedule' && userRole === 'tutor' && (
-        <TutorSchedulePage userRole={userRole} onNavigate={handleNavigate} onGoBack={handleGoBack} />
+        <TutorSchedulePage userRole={userRole as 'tutor'} onNavigate={handleNavigate} onGoBack={handleGoBack} />
       )}
       {currentPage === 'student-schedule' && userRole === 'student' && (
         <StudentSchedulePage userRole={userRole} onNavigate={handleNavigate} onGoBack={handleGoBack} />
@@ -129,5 +235,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
